@@ -1,0 +1,68 @@
+# Deploy the AGMB design system to GitHub Pages.
+#
+# Triggers on every push to `main` or `feat/design-system-foundation` (the
+# active working branch). After PR merge, drop the feat/ trigger.
+#
+# next.config.ts reads NEXT_PUBLIC_BASE_PATH for the subpath; setting it here
+# at the workflow level ensures both the build and the runtime client bundle
+# pick up the same value.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - feat/design-system-foundation
+  workflow_dispatch:
+
+# Only allow one concurrent deploy. Newer pushes cancel in-flight runs so the
+# repo never ends up with a stale build live while a newer commit is queued.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  NEXT_PUBLIC_BASE_PATH: /agmb-design-system
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (next export to ./out)
+        run: npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

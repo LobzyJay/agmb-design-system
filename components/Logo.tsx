@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { asset } from "@/lib/site-config";
 
 // AGMB Logo primitive — 2026-05-10.
 // Single source of truth for every brand-mark surface: site header, footer,
@@ -50,13 +51,15 @@ interface VariantSpec {
   kind: "wordmark" | "icon";
 }
 
+// Assets live under public/brand/logo/. Paths run through `asset()` so the
+// GitHub Pages basePath prefix is applied at build time when set.
 const VARIANTS: Record<LogoVariant, VariantSpec> = {
-  "wordmark-coloured":   { src: "/brand/logo/agmb-wordmark-coloured.svg",   viewWidth: 1850, viewHeight: 523, kind: "wordmark" },
-  "wordmark-mono-white": { src: "/brand/logo/agmb-wordmark-mono-white.svg", viewWidth: 1850, viewHeight: 523, kind: "wordmark" },
-  "wordmark-mono-black": { src: "/brand/logo/agmb-wordmark-mono-black.svg", viewWidth: 1850, viewHeight: 523, kind: "wordmark" },
-  "icon-coloured":       { src: "/brand/logo/agmb-icon-coloured.svg",       viewWidth: 659,  viewHeight: 506, kind: "icon"     },
-  "icon-mono-white":     { src: "/brand/logo/agmb-icon-mono-white.svg",     viewWidth: 632,  viewHeight: 466, kind: "icon"     },
-  "icon-mono-black":     { src: "/brand/logo/agmb-icon-mono-black.svg",     viewWidth: 632,  viewHeight: 466, kind: "icon"     },
+  "wordmark-coloured":   { src: asset("/brand/logo/agmb-wordmark-coloured.svg"),   viewWidth: 1850, viewHeight: 523, kind: "wordmark" },
+  "wordmark-mono-white": { src: asset("/brand/logo/agmb-wordmark-mono-white.svg"), viewWidth: 1850, viewHeight: 523, kind: "wordmark" },
+  "wordmark-mono-black": { src: asset("/brand/logo/agmb-wordmark-mono-black.svg"), viewWidth: 1850, viewHeight: 523, kind: "wordmark" },
+  "icon-coloured":       { src: asset("/brand/logo/agmb-icon-coloured.svg"),       viewWidth: 659,  viewHeight: 506, kind: "icon"     },
+  "icon-mono-white":     { src: asset("/brand/logo/agmb-icon-mono-white.svg"),     viewWidth: 632,  viewHeight: 466, kind: "icon"     },
+  "icon-mono-black":     { src: asset("/brand/logo/agmb-icon-mono-black.svg"),     viewWidth: 632,  viewHeight: 466, kind: "icon"     },
 };
 
 /** Minimum sizes below which sub-pixel render breaks. Enforced in /design § 02. */

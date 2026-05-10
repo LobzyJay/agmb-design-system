@@ -25,7 +25,12 @@ import {
   Chapter05,
   Chapter06,
 } from "@/components/design/chapters";
-import { ScrollProgressPath } from "@/components/ScrollProgressPath";
+
+// ScrollProgressPath removed from /design 2026-05-10 — the right-rail dot
+// indicator competed visually with the sidebar nav and added noise without
+// adding navigation value the sidebar didn't already provide. The primitive
+// component is still in components/ScrollProgressPath.tsx and documented as
+// a reference; it's just not active on this page.
 
 export default function DesignSystemDocs() {
   const ids = React.useMemo(() => SIDEBAR_CHAPTERS.map((c) => c.id), []);
@@ -34,10 +39,6 @@ export default function DesignSystemDocs() {
 
   return (
     <main className="min-h-screen bg-surface-light-1 text-ag-text flex flex-col lg:grid lg:grid-cols-[18rem_1fr]">
-      {/* ScrollProgressPath — fixed right rail indicator for /design chapters.
-          Rewired 2026-05-09: 6-chapter mapping, navy register (not gold),
-          GSAP scrub against document.documentElement for tall chapter heights. */}
-      <ScrollProgressPath />
       <Sidebar
         chapters={SIDEBAR_CHAPTERS as unknown as Parameters<typeof Sidebar>[0]["chapters"]}
         activeId={activeId}

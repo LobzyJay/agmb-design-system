@@ -16,6 +16,8 @@
 # next.js
 /.next/
 /out/
+# (`/out/` is the static export target used by the GitHub Pages build —
+# generated fresh by .github/workflows/deploy.yml on every push)
 
 # production
 /build
