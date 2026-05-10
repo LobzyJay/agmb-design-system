@@ -1,26 +1,1285 @@
 @import "tailwindcss";
 
+/* ============================================================
+   AGMB Design Tokens — locked at architecture time
+   Sources:
+   · PRD §4.2 (colour) — locked
+   · PRD §4.3 (motion) — locked
+   · LESSONS §4 (motion as SSOT)
+   · PRD §4.1 + §7 (typography) — superseded by Adewale lock 2026-05-09:
+       Elms Sans + Libre Baskerville are HEADING/DISPLAY + bi-script
+       combination ONLY. Body, UI, numerics, and code samples all move
+       to Inter Tight + Inter. Geist Mono is dropped entirely.
+
+   ── Token tier model (Lane A · 2026-05-09) ──────────────────────
+   Three canonical tiers. Every component consumes via the tier
+   appropriate to its coupling level — never raw hex.
+
+   ┌─────────────────────────────────────────────────────────────┐
+   │  ref  (reference)                                           │
+   │  Brand-owned primitives. The 24 locked hexes + raw values.  │
+   │  Never consumed directly by UI components.                  │
+   │  Examples: --ref-color-navy-500, --ref-radius-card-base     │
+   └────────────────────┬────────────────────────────────────────┘
+                        │ var(--ref-*)
+   ┌────────────────────▼────────────────────────────────────────┐
+   │  sys  (system / semantic)                                   │
+   │  Aliases that point at ref. THIS LAYER FLIPS in dark mode   │
+   │  and high-contrast mode. Components should consume sys      │
+   │  tokens for any colour that varies by theme.                │
+   │  Examples: --sys-color-text-primary, --sys-color-surface-bg │
+   └────────────────────┬────────────────────────────────────────┘
+                        │ var(--sys-*)
+   ┌────────────────────▼────────────────────────────────────────┐
+   │  comp  (component / composition)                            │
+   │  Component-scoped overrides. Named pair tokens live here.   │
+   │  The --pair-* tokens are exactly this — component           │
+   │  compositions. Renamed from --pair-* → --comp-* in Lane A.  │
+   │  Examples: --comp-cta-primary-bg, --comp-nav-fill           │
+   └─────────────────────────────────────────────────────────────┘
+
+   Migration strategy (additive aliasing):
+   · Existing --ag-* brand utilities (Tailwind bg-ag-navy, etc.) are
+     KEPT as-is. They become aliases at the ref tier.
+   · New --ref-* / --sys-* / --comp-* names are layered ON TOP,
+     each pointing to the existing canonical via var().
+   · Components migrate to --sys-* / --comp-* at their own pace.
+     Nothing breaks during migration.
+   · QA gate: every new component token must consume via --comp-*
+     not --ref-*. Existing --ag-* are legacy-permitted until a
+     component-by-component migration pass.
+
+   Legacy layers (kept for backward compat):
+     CANONICAL    — owns the hex (ag-navy families + neutrals). Locked.
+     SURFACE / SEMANTIC — pure aliases via var(...). No hex literals.
+     PAIR         — labelled compositions → renamed comp-* in Lane A.
+   ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ════════════════════════════════════════════════════════════
+     LAYER 1 — CANONICAL HEXES.  Single source of truth.
+     Editing any value here cascades through the entire system.
+     ════════════════════════════════════════════════════════════ */
+
+  /* Brand · navy family (PRD §4.2 — navy is locked) */
+  --ag-navy:         #0A2540;   /* primary inverse · trust · regulatory plate */
+  --ag-navy-deep:    #061A2E;   /* cinematic depth · footer · dual-blue bg */
+  --ag-navy-soft:    #0F2F50;   /* lifted dark · hover · alt rows */
+  --ag-navy-vivid:   #1F4FA8;   /* h=219° · electric saturated navy · primary CTA · AI accent (Stripe register) */
+
+  /* Brand · cream family (PRD §4.2 — cream is locked) */
+  --ag-cream:        #F8F5EF;   /* heritage cream · accent surface · text on dark */
+  --ag-cream-warm:   #FAF3E8;   /* peach undertone · hero/photograph wash · CTA text */
+  --ag-cream-deep:   #EDE5D5;   /* toasted cream · third tier surface */
+  --ag-cream-vivid:  #FFEFC2;   /* h=44° · luminous · hero highlight wash */
+
+  /* Brand · gold family (PRD §4.2 — gold is locked, demoted to decorative-only 2026-05-09) */
+  --ag-gold:         #C8972A;   /* PRD-locked solid gold · hairlines · logo accent */
+  --ag-gold-rich:    #E0B040;   /* warmer/saturated gold */
+  --ag-gold-soft:    #DDA935;   /* warmer top-stop */
+  --ag-gold-vivid:   #F0C441;   /* h=45° · Apple Card register · celebration */
+
+  /* Brand · green family (PRD §4.2 — green is locked) */
+  --ag-green:        #1A7A4A;   /* feedback.success · LTV-safe · default green */
+  --ag-green-sage:   #E6EFE8;   /* desaturated green-50 wash · feedback surface */
+  --ag-green-deep:   #14613A;   /* darker accent on cream */
+  --ag-green-vivid:  #22C55E;   /* h=142° · vivid spring green · success lift */
+
+  /* Neutrals · text · borders · feedback */
+  --ag-white:        #FFFFFF;   /* page bg · primary card · default surface */
+  --ag-light:        #F4F5F7;   /* subtle surface · disabled · pressed */
+  --ag-text:         #101828;   /* body text · never #000 (PRD §7) */
+  --ag-muted:        #475467;   /* secondary copy */
+  --ag-border:       #D0D5DD;   /* default border */
+  --ag-amber:        #B45309;   /* feedback.warning · LTV-caution */
+  --ag-red:          #B42318;   /* feedback.danger · validation error */
+
+  /* Subtle-alt neutral surface — only canonical that doesn't fold into a
+     brand family. Kept distinct because surface-light-2 and ag-light are
+     two different greys (#F9FAFB vs #F4F5F7). */
+  --surface-alt:     #F9FAFB;   /* zebra rows · subtle alt · between white and ag-light */
+
+  /* ════════════════════════════════════════════════════════════
+     LAYER 2 — SEMANTIC + SURFACE ALIASES.  No hex literals below.
+     Every declaration is var(--canonical). Change a canonical and
+     every alias follows.
+     ════════════════════════════════════════════════════════════ */
+
+  /* Surface scales — light + dark, both 3-tier */
+  --surface-light-1: var(--ag-white);
+  --surface-light-2: var(--surface-alt);
+  --surface-light-3: var(--ag-light);
+  --surface-dark-1:  var(--ag-navy);
+  --surface-dark-2:  var(--ag-navy-soft);
+  --surface-dark-3:  var(--ag-navy-deep);
+
+  /* Semantic layer — TRIMMED 2026-05-09 v4 per dedupe agent's drift critique.
+     Only the 4 tokens actually consumed by global selectors stay. The other
+     10 were ceremonial (defined for a shadcn-style theme switcher we never
+     shipped — primitives reach brand utilities directly via `text-ag-navy`
+     etc.). Remaining four:
+     · text-primary → body { color }
+     · surface-base → unused-but-kept (likely future dark-mode hook)
+     · text-accent  → reserved decorative token (gold accent, post-demotion)
+     · feedback.{success,warning,danger} → consumed by InlinePrompt + form errors */
+  --color-text-primary:     var(--ag-text);
+  --color-feedback-success: var(--ag-green);
+  --color-feedback-warning: var(--ag-amber);
+  --color-feedback-danger:  var(--ag-red);
+
+  /* Feature highlight — emphasis hook, defaults to navy.vivid (AI register).
+     Remap per-surface if a section needs a different "active" colour. */
+  --color-feature-highlight: var(--ag-navy-vivid);
+
+  /* ════════════════════════════════════════════════════════════
+     LAYER 3 — NAMED COLOUR PAIRINGS.  Pure aliases.
+     Each pair labels a `surface · text · accent` composition.
+     When a primitive needs a colour decision it picks a named
+     pair, never raw tokens. See AGMB_DESIGN_SYSTEM.md.
+     ════════════════════════════════════════════════════════════ */
+
+  /* pair.cta.primary — electric institutional · primary CTA.
+     Hover via shadcn-style opacity modifier at call site (`/90`).
+     IMPORTANT: --pair-cta-primary-surface is now an alias through
+     --comp-cta-primary-bg so that [data-surface="dark"] remaps propagate
+     automatically to any consumer that holds a reference to --pair-cta-primary-surface
+     (including the bg-pair-cta-primary Tailwind utility and Button's primary variant).
+     No component-side changes required — Option (b) alias indirection. */
+  --pair-cta-primary-surface: var(--comp-cta-primary-bg);
+  --pair-cta-primary-text:    var(--comp-cta-primary-fg);
+  --pair-cta-primary-accent:  var(--ag-navy-vivid);
+
+  /* pair.cta.destructive — cancel application · delete scenario. */
+  --pair-cta-destructive-surface: var(--ag-red);
+  --pair-cta-destructive-text:    var(--ag-cream);
+  --pair-cta-destructive-accent:  var(--ag-red);
+
+  /* pair.surface.dual-blue — Adewale 2026-05-09: "dark blue as bg and primary
+     blue on top". Stripe/Mercury "dark hero + electric cards" register. */
+  --pair-surface-dual-blue-bg:      var(--ag-navy-deep);
+  --pair-surface-dual-blue-surface: var(--ag-navy-vivid);
+  --pair-surface-dual-blue-text:    var(--ag-cream-warm);
+
+  /* pair.surface.default — page bg · card default · neutral */
+  --pair-surface-default-surface: var(--ag-white);
+  --pair-surface-default-text:    var(--ag-text);
+  --pair-surface-default-accent:  var(--ag-border);
+
+  /* pair.surface.warm — hero photograph wash · alternating section */
+  --pair-surface-warm-surface: var(--ag-cream-warm);
+  --pair-surface-warm-text:    var(--ag-navy);
+  --pair-surface-warm-accent:  var(--ag-border);
+
+  /* pair.surface.deep — cinematic depth · footer · regulatory plate */
+  --pair-surface-deep-surface: var(--ag-navy-deep);
+  --pair-surface-deep-text:    var(--ag-cream);
+  --pair-surface-deep-accent:  var(--ag-navy-vivid);
+
+  /* pair.trust.regulatory — CBN · ISO · NDIC · institutional gravitas */
+  --pair-trust-regulatory-surface: var(--ag-navy);
+  --pair-trust-regulatory-text:    var(--ag-cream);
+  --pair-trust-regulatory-accent:  var(--ag-navy-vivid);
+
+  /* pair.feedback.safe — LTV-safe · success toast */
+  --pair-feedback-safe-surface: var(--ag-green-sage);
+  --pair-feedback-safe-text:    var(--ag-green-deep);
+  --pair-feedback-safe-accent:  var(--ag-green-vivid);
+
+  /* pair.feedback.caution — LTV-caution · soft warning */
+  --pair-feedback-caution-surface: var(--ag-cream-warm);
+  --pair-feedback-caution-text:    var(--ag-navy);
+  --pair-feedback-caution-accent:  var(--ag-amber);
+
+  /* pair.feedback.danger — validation error · stop-and-fix */
+  --pair-feedback-danger-surface: rgba(180, 35, 24, 0.05);  /* ag-red @ 5% — only literal because rgba() can't reference hex tokens */
+  --pair-feedback-danger-text:    var(--ag-red);
+  --pair-feedback-danger-accent:  var(--ag-red);
+
+  /* pair.numeric.emphasis — hero numeric on light surfaces (the AGMB moment) */
+  --pair-numeric-emphasis-text: var(--ag-navy-vivid);
+
+  /* ════════════════════════════════════════════════════════════
+     TIER ALIASES — Lane A · 2026-05-09
+     ref / sys / comp — additive on top of the legacy --ag-* and
+     --pair-* tokens. Both naming stacks co-exist during migration.
+     Components migrate to the new tier names at their own pace.
+
+     ref — primitive brand values (point at --ag-* canonicals).
+     sys — semantic theme layer (what flips in dark mode).
+     comp — component-scoped compositions (replaces --pair-* names).
+     ════════════════════════════════════════════════════════════ */
+
+  /* ── ref · colour ─────────────────────────────────────────── */
+  /* Navy family */
+  --ref-color-navy-500:      var(--ag-navy);
+  --ref-color-navy-700:      var(--ag-navy-deep);
+  --ref-color-navy-400:      var(--ag-navy-soft);
+  --ref-color-navy-vivid:    var(--ag-navy-vivid);
+  /* Cream family */
+  --ref-color-cream-500:     var(--ag-cream);
+  --ref-color-cream-warm:    var(--ag-cream-warm);
+  --ref-color-cream-deep:    var(--ag-cream-deep);
+  --ref-color-cream-vivid:   var(--ag-cream-vivid);
+  /* Gold family */
+  --ref-color-gold-500:      var(--ag-gold);
+  --ref-color-gold-rich:     var(--ag-gold-rich);
+  --ref-color-gold-soft:     var(--ag-gold-soft);
+  --ref-color-gold-vivid:    var(--ag-gold-vivid);
+  /* Green family */
+  --ref-color-green-500:     var(--ag-green);
+  --ref-color-green-sage:    var(--ag-green-sage);
+  --ref-color-green-deep:    var(--ag-green-deep);
+  --ref-color-green-vivid:   var(--ag-green-vivid);
+  /* Neutrals */
+  --ref-color-white:         var(--ag-white);
+  --ref-color-light:         var(--ag-light);
+  --ref-color-text:          var(--ag-text);
+  --ref-color-muted:         var(--ag-muted);
+  --ref-color-border:        var(--ag-border);
+  --ref-color-amber:         var(--ag-amber);
+  --ref-color-red:           var(--ag-red);
+  --ref-color-surface-alt:   var(--surface-alt);
+
+  /* ── ref · radius ─────────────────────────────────────────── */
+  --ref-radius-card-base:    8px;
+  --ref-radius-button-base:  6px;
+  --ref-radius-input-base:   4px;
+
+  /* ── ref · shadow ─────────────────────────────────────────── */
+  --ref-shadow-soft-1:       var(--shadow-soft-1);
+  --ref-shadow-soft-2:       var(--shadow-soft-2);
+  --ref-shadow-soft-3:       var(--shadow-soft-3);
+
+  /* ── ref · motion ─────────────────────────────────────────── */
+  --ref-motion-instant:      var(--motion-duration-instant);
+  --ref-motion-fast:         var(--motion-duration-fast);
+  --ref-motion-base:         var(--motion-duration-base);
+  --ref-motion-slow:         var(--motion-duration-slow);
+  --ref-motion-curtain:      var(--motion-duration-curtain);
+  --ref-motion-ease-default: var(--motion-ease-default);
+  --ref-motion-ease-out:     var(--motion-ease-out);
+  --ref-motion-ease-in:      var(--motion-ease-in);
+
+  /* ── sys · colour (semantic / themeable) ──────────────────── */
+  /* Text hierarchy */
+  --sys-color-text-primary:    var(--ref-color-text);
+  --sys-color-text-secondary:  var(--ref-color-muted);
+  --sys-color-text-inverse:    var(--ref-color-cream-500);
+  --sys-color-text-accent:     var(--ref-color-navy-vivid);
+  /* Surfaces */
+  --sys-color-surface-bg:      var(--ref-color-white);
+  --sys-color-surface-subtle:  var(--ref-color-surface-alt);
+  --sys-color-surface-muted:   var(--ref-color-light);
+  --sys-color-surface-inverse: var(--ref-color-navy-500);
+  --sys-color-surface-deep:    var(--ref-color-navy-700);
+  /* Borders */
+  --sys-color-border-default:  var(--ref-color-border);
+  --sys-color-border-strong:   var(--ref-color-text);
+  /* Feedback */
+  --sys-color-feedback-success: var(--ref-color-green-500);
+  --sys-color-feedback-warning: var(--ref-color-amber);
+  --sys-color-feedback-danger:  var(--ref-color-red);
+  /* Feature accent */
+  --sys-color-accent:           var(--ref-color-navy-vivid);
+
+  /* ── sys · radius ─────────────────────────────────────────── */
+  --sys-radius-card:    var(--ref-radius-card-base);
+  --sys-radius-button:  var(--ref-radius-button-base);
+  --sys-radius-input:   var(--ref-radius-input-base);
+
+  /* ── sys · motion ─────────────────────────────────────────── */
+  --sys-motion-instant:       var(--ref-motion-instant);
+  --sys-motion-fast:          var(--ref-motion-fast);
+  --sys-motion-base:          var(--ref-motion-base);
+  --sys-motion-slow:          var(--ref-motion-slow);
+  --sys-motion-curtain:       var(--ref-motion-curtain);
+  --sys-motion-ease-default:  var(--ref-motion-ease-default);
+  --sys-motion-ease-out:      var(--ref-motion-ease-out);
+  --sys-motion-ease-in:       var(--ref-motion-ease-in);
+
+  /* ── comp · CTA ────────────────────────────────────────────── */
+  /* --comp-cta-primary-bg and --comp-cta-primary-fg are the SSOT for the
+     primary button chrome. --pair-cta-primary-surface / --pair-cta-primary-text
+     are aliases that point HERE so [data-surface="dark"] overrides cascade to
+     all downstream consumers (bg-pair-cta-primary, Button variant="primary").
+     Option (b) alias indirection — no component code changed. */
+  --comp-cta-primary-bg:        var(--ag-navy-vivid);
+  --comp-cta-primary-fg:        var(--ag-cream-warm);
+  --comp-cta-primary-text:      var(--comp-cta-primary-fg);
+  /* Focus-ring colour for primary CTA on light surfaces. Remapped to
+     cream inside [data-surface="dark"] so the ring stays visible on
+     saturated navy backgrounds. See dark-surface override scope below. */
+  --comp-cta-primary-accent:    var(--ag-navy-vivid);
+  --comp-cta-destructive-bg:    var(--pair-cta-destructive-surface);
+  --comp-cta-destructive-text:  var(--pair-cta-destructive-text);
+
+  /* ── comp · surface compositions ──────────────────────────── */
+  --comp-surface-default-bg:    var(--pair-surface-default-surface);
+  --comp-surface-default-text:  var(--pair-surface-default-text);
+  --comp-surface-warm-bg:       var(--pair-surface-warm-surface);
+  --comp-surface-warm-text:     var(--pair-surface-warm-text);
+  --comp-surface-deep-bg:       var(--pair-surface-deep-surface);
+  --comp-surface-deep-text:     var(--pair-surface-deep-text);
+  --comp-surface-dual-blue-bg:  var(--pair-surface-dual-blue-bg);
+  --comp-surface-dual-blue-fg:  var(--pair-surface-dual-blue-surface);
+  --comp-surface-dual-blue-text: var(--pair-surface-dual-blue-text);
+
+  /* ── comp · trust ──────────────────────────────────────────── */
+  --comp-trust-regulatory-bg:    var(--pair-trust-regulatory-surface);
+  --comp-trust-regulatory-text:  var(--pair-trust-regulatory-text);
+  --comp-trust-regulatory-accent: var(--pair-trust-regulatory-accent);
+
+  /* ── comp · feedback ───────────────────────────────────────── */
+  --comp-feedback-safe-bg:      var(--pair-feedback-safe-surface);
+  --comp-feedback-safe-text:    var(--pair-feedback-safe-text);
+  --comp-feedback-safe-accent:  var(--pair-feedback-safe-accent);
+  --comp-feedback-caution-bg:   var(--pair-feedback-caution-surface);
+  --comp-feedback-caution-text: var(--pair-feedback-caution-text);
+  --comp-feedback-caution-accent: var(--pair-feedback-caution-accent);
+  --comp-feedback-danger-bg:    var(--pair-feedback-danger-surface);
+  --comp-feedback-danger-text:  var(--pair-feedback-danger-text);
+  --comp-feedback-danger-accent: var(--pair-feedback-danger-accent);
+
+  /* ── comp · numeric emphasis ───────────────────────────────── */
+  --comp-numeric-emphasis-text: var(--pair-numeric-emphasis-text);
+
+  /* ════════════════════════════════════════════════════════════
+     RADIUS · SHADOW · MOTION.
+     ════════════════════════════════════════════════════════════ */
+
+  /* Radius scale — v2 Stripe-restraint pass (2026-05-09): 8 / 6 / 4. */
+  --radius-card:    8px;
+  --radius-button:  6px;
+  --radius-input:   4px;
+
+  /* Soft elevation stack — navy-tinted, contemporary depth. */
+  --shadow-soft-1: 0 1px 2px rgba(10, 37, 64, 0.06), 0 2px 4px rgba(10, 37, 64, 0.04);
+  --shadow-soft-2: 0 2px 4px rgba(10, 37, 64, 0.08), 0 8px 24px -4px rgba(10, 37, 64, 0.10);
+  --shadow-soft-3: 0 4px 8px rgba(10, 37, 64, 0.10), 0 16px 48px -8px rgba(10, 37, 64, 0.16);
+  /* Card rest-state shadow — calibrated for cream/white surface tiles to
+     prevent visual dissolving on white-page-bg without competing with the
+     hover-lift escalation (--shadow-soft-1). Stripe-restraint v3 register.
+     Hero + mid variants only; wide variant uses navy bg for inherent weight. */
+  --shadow-tile-rest: 0 1px 4px rgba(10, 37, 64, 0.06);
+
+  /* Motion tokens (PRD §4.3) — locked. */
+  --motion-duration-instant: 100ms;
+  --motion-duration-fast:    200ms;
+  --motion-duration-base:    300ms;
+  --motion-duration-slow:    500ms;
+  --motion-duration-curtain: 1200ms;
+
+  --motion-ease-default: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-out:     cubic-bezier(0.33, 1, 0.68, 1);
+  --motion-ease-in:      cubic-bezier(0.32, 0, 0.67, 0);
+
+  --spring-stiffness: 100;
+  --spring-damping:    20;
+  --tactile-active-y:  -1px;
 }
 
+/* ============================================================
+   dark-surface override scope · 2026-05-09 (Lane FOUNDATION)
+
+   When a parent element carries data-surface="dark", any primary
+   CTA inside that scope flips chrome — cream-fill + navy text —
+   so it remains visible on dark/saturated surfaces (navy.vivid,
+   navy.deep). No consumer prop required. The scope cascades.
+
+   How it works (Option b alias chain):
+     --comp-cta-primary-bg      (overridden here)
+       ↑ aliased by
+     --pair-cta-primary-surface (which bg-pair-cta-primary Tailwind utility resolves)
+       ↑ consumed by
+     Button variant="primary"   (bg-pair-cta-primary className)
+
+   The [data-surface="dark"] override reaches Button automatically.
+   No component code changes. No new prop or variant.
+
+   Text tokens for dark-surface compositions:
+     --comp-text-muted-on-surface   — for sub-labels, captions, percentages
+     --comp-text-primary-on-surface — for body copy, headings inside the scope
+
+   Downstream lanes consume these instead of hardcoding text-ag-cream/70.
+   Add more --comp-* token remaps inside this block as new dark-surface
+   compositions land (RepaymentSplitBar restyle, Calculator restyle, etc.).
+
+   Surfaces that activate this scope: navy.vivid card, navy.deep section,
+   bg-ag-navy, bg-ag-navy-vivid, bg-surface-dark-*.
+   ============================================================ */
+[data-surface="dark"] {
+  --comp-cta-primary-bg:              var(--ag-cream-warm);
+  --comp-cta-primary-fg:              var(--ag-navy);
+  /* Focus-ring legibility on dark/saturated surfaces (navy.vivid on navy = invisible).
+     Cream.warm at 2px offset reads 4.5:1+ against the dark background. */
+  --comp-cta-primary-accent:          var(--ag-cream-warm);
+  --comp-text-muted-on-surface:       var(--ag-cream-warm);
+  --comp-text-primary-on-surface:     var(--ag-cream);
+  /* --pair-cta-primary-surface aliases --comp-cta-primary-bg, so overriding
+     --comp-cta-primary-bg here is sufficient — the cascade propagates through
+     the alias chain to bg-pair-cta-primary automatically. The explicit
+     --pair-cta-primary-text remap is kept so text-on-button consumers
+     (style={{ color: 'var(--pair-cta-primary-text)' }}) also flip. */
+  --pair-cta-primary-surface:         var(--ag-cream-warm);
+  --pair-cta-primary-text:            var(--ag-navy);
+  /* Tailwind v4 unbake fix #2 (2026-05-10):
+     Even with `@theme` (non-inline), Tailwind bakes `--color-pair-cta-primary`
+     to a static hex at :root, so the bg-pair-cta-primary utility doesn't pick
+     up the alias-chain cascade. We re-declare the Tailwind-facing token
+     directly inside the dark-surface scope to bypass the bake.
+     Verified 2026-05-10: without this line, the primary button rendered as
+     navy.vivid on a navy.vivid surface (invisible) inside data-surface="dark". */
+  --color-pair-cta-primary:           var(--ag-cream-warm);
+}
+
+/* ============================================================
+   Tailwind v4 — wire tokens into utility classes
+   ============================================================ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Brand utilities — bg-ag-navy · text-ag-cream-warm · border-ag-gold ── */
+  --color-ag-navy:        var(--ag-navy);
+  --color-ag-navy-deep:   var(--ag-navy-deep);
+  --color-ag-navy-soft:   var(--ag-navy-soft);
+  --color-ag-navy-vivid:  var(--ag-navy-vivid);
+
+  --color-ag-cream:       var(--ag-cream);
+  --color-ag-cream-warm:  var(--ag-cream-warm);
+  --color-ag-cream-deep:  var(--ag-cream-deep);
+  --color-ag-cream-vivid: var(--ag-cream-vivid);
+
+  --color-ag-gold:        var(--ag-gold);
+  --color-ag-gold-rich:   var(--ag-gold-rich);
+  --color-ag-gold-soft:   var(--ag-gold-soft);
+  --color-ag-gold-vivid:  var(--ag-gold-vivid);
+
+  --color-ag-green:       var(--ag-green);
+  --color-ag-green-sage:  var(--ag-green-sage);
+  --color-ag-green-deep:  var(--ag-green-deep);
+  --color-ag-green-vivid: var(--ag-green-vivid);
+
+  --color-ag-white:       var(--ag-white);
+  --color-ag-light:       var(--ag-light);
+  --color-ag-text:        var(--ag-text);
+  --color-ag-muted:       var(--ag-muted);
+  --color-ag-border:      var(--ag-border);
+  --color-ag-amber:       var(--ag-amber);
+  --color-ag-red:         var(--ag-red);
+
+  /* ── Surface scale utilities — bg-surface-light-1 · bg-surface-dark-3 ── */
+  --color-surface-light-1: var(--surface-light-1);
+  --color-surface-light-2: var(--surface-light-2);
+  --color-surface-light-3: var(--surface-light-3);
+  --color-surface-dark-1:  var(--surface-dark-1);
+  --color-surface-dark-2:  var(--surface-dark-2);
+  --color-surface-dark-3:  var(--surface-dark-3);
+
+  /* ── Feature highlight utility — bg-feature-highlight (rare; usually consumed inline) ── */
+  --color-feature-highlight: var(--color-feature-highlight);
+
+  /* ── Font utilities — typography lock 2026-05-09 ────────────────────
+     Geist Mono is dropped entirely. `--font-mono` token retired; numerics
+     consume `--font-numeric` (Inter Tight + tabular figures). Elms Sans
+     and Libre Baskerville are heading + bi-script ONLY — body and UI
+     use Inter / Inter Tight.
+     · font-sans    → Elms Sans      (HEADING-ONLY · bi-script sans side)
+     · font-serif   → Libre Baskerville (HEADING-ONLY · bi-script serif side)
+     · font-body    → Inter          (default body · prose-optimised · 14–18px)
+     · font-body-tight → Inter Tight (UI labels · buttons · medium-density · 14–32px)
+     · font-numeric → Inter Tight    (tabular figures via OpenType `tnum`)
+     All four load via next/font/google. */
+  --font-sans:        var(--font-elms-sans),     system-ui, sans-serif;
+  --font-serif:       var(--font-libre-baskerville), Georgia, serif;
+  --font-body:        var(--font-inter),         system-ui, sans-serif;
+  --font-body-tight:  var(--font-inter-tight),   system-ui, sans-serif;
+  --font-numeric:     var(--font-inter-tight),   system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ============================================================
+   Tailwind v4 — pair surface utilities (RUNTIME-RESOLVABLE)
+   These tokens must NOT live in @theme inline — that block bakes
+   var() references to static RGB at build time, defeating the
+   [data-surface="dark"] runtime cascade. A plain @theme block
+   (without the inline modifier) keeps the var() chain intact so
+   [data-surface="dark"] remaps propagate correctly at runtime.
+
+   The `surface` stop of each named pair is exposed as a Tailwind
+   bg-pair-* utility. Text + accent are consumed via raw CSS variable
+   in style={{ color: 'var(--pair-...-text)' }} where utilities
+   don't reach.
+   ============================================================ */
+@theme {
+  --color-pair-cta-primary:        var(--pair-cta-primary-surface);
+  --color-pair-cta-destructive:    var(--pair-cta-destructive-surface);
+  --color-pair-surface-default:    var(--pair-surface-default-surface);
+  --color-pair-surface-warm:       var(--pair-surface-warm-surface);
+  --color-pair-surface-deep:       var(--pair-surface-deep-surface);
+  --color-pair-surface-dual-blue:  var(--pair-surface-dual-blue-surface);
+  --color-pair-trust-regulatory:   var(--pair-trust-regulatory-surface);
+  --color-pair-feedback-safe:      var(--pair-feedback-safe-surface);
+  --color-pair-feedback-caution:   var(--pair-feedback-caution-surface);
+  --color-pair-feedback-danger:    var(--pair-feedback-danger-surface);
+}
+
+/* ============================================================
+   iOS Safari drift prevention — LESSONS §2 Day-0 measure.
+   ============================================================ */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+section { overflow-x: clip; }
+
+header[data-sticky] {
+  position: sticky;
+  top: 0;
+  background: inherit;
+}
+
+/* ============================================================
+   Reduced motion — PRD §4.3 default-equal, not fallback.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
+/* ============================================================
+   Base typographic register
+
+   Modernization pivot 2026-05-08: base surface flips cream → white.
+   Cream becomes a section accent (Calculator output, Trust, Hero),
+   not the page-wide field. The white field is what reads as
+   modern-institutional (Stripe / Mercury / ACI register).
+   ============================================================ */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-surface-base);
+  color: var(--color-text-primary);
+  /* Typography lock 2026-05-09: default body is Inter (prose-optimised). */
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numerics — Inter Tight with tabular figures (replaces Geist Mono 2026-05-09).
+   Inter Tight ships with OpenType `tnum`, giving us monospace digit alignment
+   without a separate mono face. Used by ExpressiveMoneyDisplay, StatBlock,
+   LTVIndicator, WizardProgress, FormField NGN prefix, hex labels, code samples. */
+.numeric {
+  font-family: var(--font-numeric);
+  font-feature-settings: 'tnum' 1;
+  font-weight: 500;
+}
+
+/* Typography agent's navy-numeric critique (2026-05-09):
+   Inter Tight 500 reads thin against a saturated navy surface. Bump to 600
+   whenever .numeric is nested in any of the dark surfaces. Cleaner than a
+   per-primitive override. `:where()` keeps specificity at zero so primitives
+   can still override locally if needed. */
+:where(.bg-ag-navy, .bg-ag-navy-deep, .bg-ag-navy-soft, .bg-ag-navy-vivid,
+       .bg-surface-dark-1, .bg-surface-dark-2, .bg-surface-dark-3,
+       .bg-pair-cta-primary, .bg-pair-cta-destructive, .bg-pair-trust-regulatory,
+       .bg-pair-surface-deep, .bg-pair-surface-dual-blue,
+       .bg-ag-mesh-navy) .numeric {
+  font-weight: 600;
+}
+
+/* Medium-density UI utility — Inter Tight, NO tabular figures.
+   For UI labels, button text, dense readouts that aren't numeric.
+   Use directly in className to opt into the tight UI face when the
+   element shouldn't fall through to the prose default (Inter). */
+.font-body-tight {
+  font-family: var(--font-body-tight);
+}
+
+/* ============================================================
+   Bi-script headline pattern — three weight registers.
+   Source: typeguide.png + Adewale clarifications 2026-05-08 / 09.
+
+   USAGE RULES (PRD §4.0 — strict):
+   - Word-level ONLY — swap WHOLE WORDS, never split a word.
+   - Case-MATCH the two faces. Both Title Case (or both lowercase).
+     UPPERCASE sans + lowercase serif = banned (Adewale 2026-05-09:
+     "you doin uppercase Elms sans lowercase Baskerville, that is
+     poor visual designs"). The contrast comes from typeface, not
+     case-mixing.
+   - Sans handles directional / category words (verbs, prepositions).
+   - Serif handles the focus word/phrase (subject, noun).
+     <bi-section>
+       <span class="bi-sans">Why</span>
+       <span class="bi-serif">AG Mortgage Bank</span>
+     </bi-section>
+   - .bi-sans / .bi-serif consume font-weight from CSS variables.
+   - Wrapper classes (.bi-display / .bi-section / .bi-label) set the var pair
+     so the same script-contrast holds at every tier of the type scale.
+   - Default (no wrapper) is the Label register.
+
+   | Register   | Sans (Elms)   | Serif (Libre Baskerville) | Where used                      |
+   |------------|---------------|---------------------------|---------------------------------|
+   | .bi-display | Bold 700     | Bold 700                  | Hero H1, marketing display      |
+   | .bi-section | Semibold 600 | Medium 500 *              | Major section titles            |
+   | .bi-label   | Medium 500   | Regular 400               | Section eyebrow labels (default)|
+
+   * Libre Baskerville ships only 400/400i/700; the browser simulates 500.
+     If simulation is lumpy, fallback is 400 with -0.005em tracking.
+   ============================================================ */
+.bi-sans  { font-family: var(--font-sans);  font-weight: var(--bi-sans-weight, 500); }
+.bi-serif { font-family: var(--font-serif); font-weight: var(--bi-serif-weight, 400); font-style: normal; }
+
+.bi-display { --bi-sans-weight: 700; --bi-serif-weight: 700; }
+.bi-section { --bi-sans-weight: 600; --bi-serif-weight: 500; }
+.bi-label   { --bi-sans-weight: 500; --bi-serif-weight: 400; }
+
+/* Eyebrow — uppercase Elms Sans 600, 0.08em tracking (PRD §3.1).
+   Default colour is navy for WCAG AA contrast on cream/white surfaces (gold
+   was failing 2.43:1 site-wide per Day 3.5 audit). On navy / inverse
+   surfaces components override via `.eyebrow !text-ag-gold` — that already
+   wraps the eyebrow with the gold hairline rule for brand cohesion. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+
+/* ============================================================
+   Global focus-visible — guaranteed paint, no Tailwind v4 ring
+   composition risk. Day 3.5 audit found `focus-visible:ring-*`
+   utilities resolve to zero box-shadow on FormField wrappers,
+   nav CTA, ScrollProgressPath dots. Outline always paints.
+   ============================================================ */
+:where(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--ag-navy);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Inverse focus — cream-warm on dark/saturated surfaces.
+   Covers both legacy data-inverse and the canonical data-surface="dark" scope.
+   Cream-warm at 2px offset reads 4.5:1+ against navy/navy.vivid backgrounds. */
+:where(.bg-ag-navy, .bg-ag-navy *, [data-inverse], [data-inverse] *,
+       [data-surface="dark"], [data-surface="dark"] *) :where(button, a, input, select, textarea, summary, [tabindex]):focus-visible,
+:where(button, a, input, select, textarea, summary, [tabindex]).bg-ag-navy:focus-visible {
+  outline-color: var(--comp-cta-primary-accent);
+}
+/* Within rounded controls, match the radius for a clean ring */
+.rounded-lg:focus-within,
+.rounded-lg :where(input, select, textarea):focus-visible {
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Motion utility classes — components reference these instead of
+   inlining raw 200ms strings or cubic-bezier(...) calls.
+   LESSONS §4: tokens are SSOT, components consume them.
+   ============================================================ */
+.transition-token {
+  transition-property: background-color, color, border-color, transform, box-shadow, opacity;
+  transition-duration: var(--motion-duration-fast);
+  transition-timing-function: var(--motion-ease-default);
+}
+
+.transition-token-base {
+  transition-property: background-color, color, border-color, transform, box-shadow, opacity;
+  transition-duration: var(--motion-duration-base);
+  transition-timing-function: var(--motion-ease-default);
+}
+
+/* ============================================================
+   Modern elevation utilities (M2 modernization pass).
+   Cards / nudges / panels read with subtle navy-tinted depth.
+   Pair `.shadow-soft-2` rest + `.shadow-soft-3` hover with
+   `.hover-lift` for the AmEx-card / Stripe-card register.
+   ============================================================ */
+.shadow-soft-1 { box-shadow: var(--shadow-soft-1); }
+.shadow-soft-2 { box-shadow: var(--shadow-soft-2); }
+.shadow-soft-3 { box-shadow: var(--shadow-soft-3); }
+/* Card rest-state shadow — prevents hero/mid tiles dissolving on white-page-bg.
+   Calibrated below --shadow-soft-1 so hover escalation reads clearly.
+   Wide variant omitted — navy bg carries inherent visual weight.
+   Stripe-restraint v3 register. */
+.shadow-tile-rest { box-shadow: 0 1px 4px rgba(10, 37, 64, 0.06); }
+
+.hover-lift {
+  transition-property: transform, box-shadow;
+  transition-duration: var(--motion-duration-base);
+  transition-timing-function: var(--motion-ease-default);
+}
+.hover-lift:hover { transform: translateY(-2px); }
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift:hover { transform: none; }
+}
+
+/* Radius utilities — single source for cards / buttons / inputs.
+   v2 Stripe-restraint pass: components consume these utilities so the
+   token tightening (8 / 6 / 4) propagates without primitive churn. */
+.rounded-card   { border-radius: var(--radius-card); }
+.rounded-button { border-radius: var(--radius-button); }
+.rounded-input  { border-radius: var(--radius-input); }
+
+/* ============================================================
+   Mesh-gradient backdrops — VITALITY PASS 2026-05-08.
+
+   Earlier opacities (0.05/0.07) read as institutional flat-paper
+   on photographic test renders. Bumped to 0.18/0.22/0.14 with a
+   third bloom + a subtle warm-fade overlay so each surface has
+   real atmospheric depth. Stays inside the 4 brand families:
+   navy / gold / cream / green tonal variants only.
+
+   Each utility paints THREE blooms (corner anchors) plus a soft
+   diagonal sheen that catches light differently than the body.
+   Anti-pattern gate clear: no purple, no neon, no #000.
+   ============================================================ */
+.bg-ag-mesh-cream {
+  background-color: var(--ag-cream-warm);
+  background-image:
+    radial-gradient(ellipse 70% 60% at 18% 12%, rgba(200, 151, 42, 0.20), transparent 55%),
+    radial-gradient(ellipse 65% 55% at 85% 88%, rgba(10, 37, 64, 0.12), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(26, 122, 74, 0.06), transparent 70%);
+}
+
+.bg-ag-mesh-navy {
+  background-color: var(--ag-navy-deep);
+  background-image:
+    radial-gradient(ellipse 75% 60% at 22% 18%, rgba(224, 176, 64, 0.22), transparent 55%),
+    radial-gradient(ellipse 60% 55% at 82% 78%, rgba(248, 245, 239, 0.10), transparent 60%),
+    radial-gradient(ellipse 45% 50% at 50% 100%, rgba(26, 122, 74, 0.10), transparent 65%);
+}
+
+.bg-ag-mesh-white {
+  background-color: var(--ag-white);
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 10%, rgba(10, 37, 64, 0.06), transparent 55%),
+    radial-gradient(ellipse 55% 50% at 88% 95%, rgba(200, 151, 42, 0.08), transparent 55%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(26, 122, 74, 0.04), transparent 70%);
+}
+
+/* Sage-tinted surface — uses the locked --ag-green at low opacity.
+   Pairs with cream-warm or white. The "modern fintech alive" tone
+   the user asked for, achieved without breaking the locked palette. */
+.bg-ag-mesh-sage {
+  background-color: var(--ag-green-sage);
+  background-image:
+    radial-gradient(ellipse 70% 55% at 20% 15%, rgba(26, 122, 74, 0.14), transparent 60%),
+    radial-gradient(ellipse 55% 50% at 80% 85%, rgba(200, 151, 42, 0.12), transparent 60%);
+}
+
+/* Toasted-cream surface — deeper than --ag-cream, warmer than --ag-light.
+   The third tonal layer for section-to-section choreography. */
+.bg-ag-mesh-cream-deep {
+  background-color: var(--ag-cream-deep);
+  background-image:
+    radial-gradient(ellipse 70% 55% at 25% 18%, rgba(10, 37, 64, 0.08), transparent 55%),
+    radial-gradient(ellipse 55% 50% at 82% 88%, rgba(200, 151, 42, 0.14), transparent 60%);
+}
+
+/* ============================================================
+   12-column grid utility — user request 2026-05-08.
+
+   Drop-in `<div class="grid-12">` inside a section. Each child
+   uses col-span-N to claim columns. Container max-width 1400px,
+   px-6 / md:px-10 / lg:px-14 in line with the existing rhythm.
+   ============================================================ */
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 1.5rem;
+  row-gap: 1.5rem;
+  max-width: 1400px;
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: 1.5rem;
+}
+@media (min-width: 768px) {
+  .grid-12 { padding-inline: 2.5rem; column-gap: 2rem; }
+}
+@media (min-width: 1024px) {
+  .grid-12 { padding-inline: 3.5rem; column-gap: 2rem; }
+}
+
+/* ============================================================
+   Word-break safety net (PRD §4.0 word-level rule).
+
+   `.word-keep` enforces `word-break: keep-all` and disables CSS
+   hyphens. Apply to any heading, nav link, footer column title,
+   or label that must NEVER split mid-word under width pressure.
+   The bi-script utilities (.bi-sans / .bi-serif) themselves now
+   inherit this so a single word can never wrap across two faces.
+   ============================================================ */
+.word-keep {
+  word-break: keep-all;
+  hyphens: none;
+  -webkit-hyphens: none;
+  overflow-wrap: normal;
+}
+
+/* Fix-5: hard guard — whenever .bi-sans and .bi-serif wrap a single word
+   they must never break mid-character. We use `white-space: nowrap` instead
+   of `display: inline-block` (which broke flex/inline-flex parents).
+   `nowrap` keeps each word on one line while preserving inline display, so
+   flex children layouts and the AGMB wordmark in nav remain unaffected. */
+.bi-sans, .bi-serif {
+  word-break: keep-all;
+  hyphens: none;
+  -webkit-hyphens: none;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   RepaymentSplitBar — segment-width tween (research §3 P1).
+   The component sets flex-basis inline; this rule attaches the
+   motion token so the bar tweens between values rather than
+   snapping. flex-basis composites to GPU layout — we never
+   animate width directly. The global prefers-reduced-motion
+   media query above already collapses transition-duration to
+   <0.01ms, so no per-rule override is needed here.
+   ============================================================ */
+.agmb-split-segment {
+  transition-property: flex-basis;
+  transition-duration: var(--motion-duration-base);
+  transition-timing-function: var(--motion-ease-default);
+}
+
+/* ============================================================
+   RepaymentSplitBar — empty / loading shimmer skeleton.
+
+   .agmb-splitbar-skeleton  — the pill-shaped outer track.
+   .agmb-splitbar-shimmer   — the sliding gradient highlight.
+
+   Shimmer is a 30%-wide translucent gradient that sweeps left
+   to right once per ~1.5s. The animation is scoped inside a
+   prefers-reduced-motion: no-preference media query so users
+   who have requested less motion get a static subdued fill
+   instead (bg-ag-border/40 equivalent).
+
+   Implementation notes:
+   · overflow-hidden on the skeleton container clips the shimmer
+     to the pill shape, so radius.full is honoured automatically.
+   · The shimmer uses var(--ag-border) as its highlight colour —
+     visible on both the light (bg-ag-light) and the inverse
+     (bg-ag-cream/10) base.
+   · translateX range: -100% → 400% ensures the gradient
+     fully traverses even on very wide containers.
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes splitbar-shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+
+  .agmb-splitbar-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--ag-border) 50%,
+      transparent 100%
+    );
+    width: 30%;
+    animation: splitbar-shimmer 1.5s ease-in-out infinite;
+  }
+}
+
+/* Reduced-motion fallback: static subdued border fill, no sweep. */
+@media (prefers-reduced-motion: reduce) {
+  .agmb-splitbar-shimmer {
+    background: none;
+    /* The skeleton track itself already has bg-ag-light. Adding a
+       semi-opaque border-colour overlay signals "inactive" without
+       any motion. */
+    background-color: color-mix(in srgb, var(--ag-border) 40%, transparent);
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   Calculator — hero number enter animation
+   A brief 200ms opacity fade fires whenever the monthly repayment
+   value changes. Institutional register — not a slot-flip or digit
+   ticker. The `agmb-number-enter` class is applied with a React
+   `key` prop bump so each recompute triggers a fresh mount.
+
+   Gated inside prefers-reduced-motion: no-preference so users who
+   prefer reduced motion see an instant value swap instead.
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes agmb-number-enter {
+    from {
+      opacity: 0.4;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .agmb-number-enter {
+    animation: agmb-number-enter 200ms var(--motion-ease-out, cubic-bezier(0.33, 1, 0.68, 1)) both;
+  }
+}
+
+/* ============================================================
+   Calculator — range input chrome polish
+   Full manual styling: -webkit-appearance: none strips browser chrome,
+   then ::webkit-slider-runnable-track + ::webkit-slider-thumb take over.
+   accent-color is intentionally REMOVED — with appearance:none, accent-color
+   bleeds through on some webkit builds and fights the track background rule
+   (the cream-warm/30 track becomes invisible). Full pseudo-element control
+   is authoritative. Fallback: browsers that ignore pseudo-elements will fall
+   back to the native range with accent navy.vivid via the [data-surface="dark"]
+   colour context.
+   · Hover: thumb scales 1.12× — haptic-grade feedback without
+     breaking the native hit area.
+   · Active / drag: slight shadow lift on the thumb — tactile
+     confirmation that the input is being manipulated.
+   · The .agmb-slider class is applied on all Calculator sliders.
+   Gated in prefers-reduced-motion: no-preference for the scale
+   transform; the shadow-lift is static (not animated) so it's
+   allowed outside the gate.
+   ============================================================ */
+.agmb-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Webkit track */
+.agmb-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--ag-cream-warm) 30%, transparent);
+}
+
+/* Webkit thumb */
+.agmb-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: var(--ag-navy-vivid);
+  border: 2px solid var(--ag-cream);
+  box-shadow: 0 1px 4px rgb(6 26 46 / 0.22);
+  margin-top: -7px;
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.agmb-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 2px 8px rgb(6 26 46 / 0.30);
+}
+
+.agmb-slider:active::-webkit-slider-thumb {
+  box-shadow: 0 3px 12px rgb(6 26 46 / 0.38);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .agmb-slider:hover::-webkit-slider-thumb {
+    transform: scale(1.12);
+  }
+  .agmb-slider:active::-webkit-slider-thumb {
+    transform: scale(1.05);
+  }
+}
+
+/* Mozilla track + thumb */
+.agmb-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--ag-cream-warm) 30%, transparent);
+}
+
+.agmb-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: var(--ag-navy-vivid);
+  border: 2px solid var(--ag-cream);
+  box-shadow: 0 1px 4px rgb(6 26 46 / 0.22);
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.agmb-slider:hover::-moz-range-thumb {
+  box-shadow: 0 2px 8px rgb(6 26 46 / 0.30);
+}
+
+.agmb-slider:active::-moz-range-thumb {
+  box-shadow: 0 3px 12px rgb(6 26 46 / 0.38);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .agmb-slider:hover::-moz-range-thumb {
+    transform: scale(1.12);
+  }
+  .agmb-slider:active::-moz-range-thumb {
+    transform: scale(1.05);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Feather variant utilities · AGMB register expansion
+   Version: 2.0 · 2026-05-09 · Adewale Aloba brand-aligned iteration
+   ─────────────────────────────────────────────────────────────────
+   Apply ONLY to photographic feather assets (doc specimens + any
+   future product placements). DO NOT apply to UI components, text,
+   interactive elements, or the GoldShader canvas.
+
+   Source asset: golden-feather-07.avif (or -02.avif / -04.avif).
+   All variants operate on the same CGI macro source photographs —
+   no new image files required for gold-register variants.
+   Dual-blue and inverse variants use a wrapper + pseudo-element
+   overlay technique documented per class below.
+
+   Base rationale (2026-05-09 analysis):
+   · Native CGI feather gold: HSL(41.5 deg, ~37-42%, 48%)
+   · Target AGMB locked gold (#C8972A): HSL(41.4 deg, 65%, 47%)
+   · Hue delta: 0.1 deg — negligible. No hue-rotate() needed.
+   · saturate(165%) lifts native avg saturation from ~39% to ~64%,
+     landing within 1% of the 65% HSL target.
+   · brightness(0.97) compensates minor luminance inflation.
+
+   Performance budget: total AVIF payload <= 320KB across all assets.
+   Prefers-reduced-motion: feathers are static — no animation applied.
+   ───────────────────────────────────────────────────────────────── */
+
+/* ── Gold register · saturation-only filter on source asset ────── */
+/* feather.gold.muted (style 05) — gradient black-to-amber register  */
+/* Surface map: cream surfaces · subtle accent · muted gold          */
+.agmb-feather-tone--gold-muted {
+  filter: saturate(125%) brightness(0.95);
+}
+
+/* feather.gold.standard (style 03) — default amber-yellow gold      */
+/* Surface map: cream surfaces · default decoration register         */
+/* Legacy alias: .agmb-feather-tone kept as alias for compat         */
+.agmb-feather-tone--gold-standard,
+.agmb-feather-tone {
+  filter: saturate(165%) brightness(0.97);
+}
+
+/* feather.gold.intense (style 04) — full saturated orange-gold      */
+/* Surface map: cream surfaces · celebration accent register         */
+.agmb-feather-tone--gold-intense {
+  filter: saturate(195%) brightness(1.02);
+}
+
+/* ── Dual-blue register · filter + gradient overlay via wrapper ── */
+/*
+   Consumer pattern for dual-blue variants — requires a wrapper div:
+
+   <div class="feather-wrap feather-wrap--dualblue-vivid">
+     <img src="/decorative/feathers/golden-feather-07.avif"
+          class="agmb-feather-tone--dualblue-vivid" />
+   </div>
+
+   The wrapper is position:relative; the ::after pseudo-element lays
+   the navy gradient overlay on top. mix-blend-mode: multiply on the
+   <img> knocks the source to near-black; the gradient fades left
+   (transparent) to right (navy token). Result: gold filaments at
+   left, full navy surface at right.
+*/
+
+/* feather.dualblue.vivid (style 06) — gold filaments fading to navy.vivid */
+/* Surface map: navy.vivid surfaces · primary action register        */
+.agmb-feather-tone--dualblue-vivid {
+  filter: saturate(165%) brightness(0.97);
+  mix-blend-mode: multiply;
+}
+.feather-wrap--dualblue-vivid {
+  position: relative;
+  overflow: hidden;
+}
+.feather-wrap--dualblue-vivid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 30%,
+    var(--ag-navy-vivid) 100%
+  );
+  pointer-events: none;
+}
+
+/* feather.dualblue.deep (style 07) — gold filaments fading to navy.deep */
+/* Surface map: navy.deep surfaces · cinematic surface register      */
+.agmb-feather-tone--dualblue-deep {
+  filter: saturate(165%) brightness(0.97);
+  mix-blend-mode: multiply;
+}
+.feather-wrap--dualblue-deep {
+  position: relative;
+  overflow: hidden;
+}
+.feather-wrap--dualblue-deep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 30%,
+    var(--ag-navy-deep) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Inverse register · cream filaments on navy · pre-baked AVIF ── */
+/*
+   feather.inverse (style 02) — cream/silver filaments on navy.vivid
+   Surface map: navy.vivid + navy.deep surfaces · pattern register
+
+   CSS filter (invert + hue-rotate) produced unacceptable colour
+   shifting on the amber ground regions (green cast on warm tones).
+   Technique: pre-baked AVIF with the gold inverted to cream.
+   Use /decorative/feathers/golden-feather-07-inverse.avif.
+   No CSS filter needed — asset is pre-processed.
+
+   If the pre-baked asset is unavailable, fallback:
+   filter: invert(1) sepia(0.2) brightness(1.1);  -- imperfect
+*/
+.agmb-feather-tone--inverse {
+  /* Pre-baked inverse asset · no CSS filter required */
+  mix-blend-mode: screen;
+}
+
+/* ── Feedback register · cream filaments on green · pre-baked AVIF */
+/*
+   feather.feedback.success (style 01) — cream/silver on dark teal-green
+   Surface map: green feedback surfaces · success register · context-gated
+
+   CSS hue-rotate to green range causes the amber ground to read as
+   sickly olive — pre-baked AVIF preferred.
+   Use /decorative/feathers/golden-feather-07-success.avif.
+   Context gate: only use inside .feedback-success or [data-feedback="success"]
+   contexts. Do not place on general surfaces.
+*/
+.agmb-feather-tone--feedback-success {
+  /* Pre-baked success asset · no CSS filter required */
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+/* ── Wrapper base (shared positioning for all wrap variants) ────── */
+.feather-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Atmospheric register · embedded "full mode" treatment ─────── */
+/*
+   feather.atmospheric — the feather is not clipped; it grows out of
+   the surface. Three-layer composition:
+
+   Layer 1: <img> — source asset, object-fit:cover
+   Layer 2: ::before — progressive blur at the top (peak blur at very
+            top edge, zero blur from 40% down). Implemented via
+            backdrop-filter masked with a linear-gradient so only the
+            upper portion of the image is blurred. Avoids the halo
+            artefact that filter:blur() on the <img> itself would
+            produce along the gold filament edges.
+   Layer 3: ::after — bottom-up surface fade. Solid surface colour
+            at 0% (bottom), fades to transparent at 100% (top). The
+            solid band holds for the first 25% so the merge into the
+            surrounding surface reads as a true anchor, not a subtle
+            softening.
+
+   Consumer usage:
+     <div class="feather-wrap feather-wrap--atmospheric"
+          style="--feather-atmospheric-surface: var(--ag-navy-deep);">
+       <img class="agmb-feather-tone--atmospheric" ... />
+     </div>
+
+   --feather-atmospheric-surface defaults to --ag-navy-deep.
+   Override per-placement so the bottom fade matches the actual
+   surface the feather sits on (navy.vivid, navy.soft, cream, etc.).
+
+   Firefox compatibility: backdrop-filter is supported in Firefox 103+
+   (2022-07-26). If a project must support earlier, replace ::before
+   with a CSS mask-image approach:
+     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
+   and apply filter:blur(10px) to the img — accept the minor halo.
+   Document the fallback in the placement comment at that callsite.
+
+   prefers-reduced-motion: atmospheric is fully static — no transition
+   or animation on any layer. Safe to use without motion gates.
+
+   Performance: composes over an existing source AVIF. No new bake
+   required. Total feather payload unchanged.
+
+   Source rotation rule (2026-05-09):
+   No two consecutive tiles in the S2 variants grid may share the
+   same source asset. Rotate across GF 02, GF 04, GF 07.
+   Anti-pattern: "Repeating the same source feather image
+   consecutively in a grid breaks visual rhythm."
+*/
+
+/* feather.atmospheric tone modifier — minimal filter; the
+   composition does the heavy lifting. No mix-blend-mode needed
+   because the gradient overlay already anchors the feather to
+   the dark surface. Slight brightness lift to compensate for
+   the blur darkening the upper region. */
+.agmb-feather-tone--atmospheric {
+  filter: saturate(140%) brightness(1.06);
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Wrapper — all pseudo-elements stack over the image */
+.feather-wrap--atmospheric {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Layer 2: progressive blur at top — full blur at top edge,
+   zero blur from 40% down */
+.feather-wrap--atmospheric::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  /* Mask: blur visible only at top, fades out toward center */
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 40%);
+          mask-image: linear-gradient(to bottom, black 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Layer 3: bottom-up surface fade — solid at bottom, transparent at
+   top. The solid band height is consumer-tunable via
+   --feather-atmospheric-fade-stop (defaults to 25%).
+
+   Calibration guide:
+   · 25% default   — calibrated for ~140px specimen tiles. 35px solid
+                     at 140px height; feather feels anchored.
+   · 15% hero      — recommended for full hero panels (400px+). At
+                     400px, 15% = 60px solid; prevents an oppressively
+                     thick base band. Set inline:
+                     style="--feather-atmospheric-fade-stop: 15%"
+   · 35–40% short  — for tight accent strips (~80px) where the solid
+                     band needs to stay visible and proportional. */
+.feather-wrap--atmospheric::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    var(--feather-atmospheric-surface, var(--ag-navy-deep)) 0%,
+    var(--feather-atmospheric-surface, var(--ag-navy-deep)) var(--feather-atmospheric-fade-stop, 25%),
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
 }
