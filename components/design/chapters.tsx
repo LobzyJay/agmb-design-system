@@ -44,6 +44,7 @@ import { RegulatoryFooter } from "@/components/RegulatoryFooter";
 import { CalculatorPattern } from "@/components/patterns/CalculatorPattern";
 import { WizardPattern } from "@/components/patterns/WizardPattern";
 import { Logo } from "@/components/Logo";
+import { Disclosure } from "@/components/Disclosure";
 
 import { MORTGAGE_TYPES, MORTGAGE_TYPE_LABEL, MORTGAGE_TYPE_RATE } from "@/constants/mortgage";
 
@@ -1173,6 +1174,8 @@ export const Chapter01 = () => (
       titleSans="Voice"
       titleSerif="register"
       description="Heritage-institutional register. Three tonal principles. Vocabulary, grammar, and brand promise live in the foundations below."
+      collapsible
+      defaultCollapsed
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-ag-white border border-ag-border rounded-lg p-6">
@@ -1301,6 +1304,8 @@ export const Chapter01 = () => (
       titleSans="Vocabulary"
       titleSerif="terms"
       description="Term-level rules. Regulatory-mandated entries marked with footnotes — these are not stylistic preferences. Source: AGMB_COPY_LIBRARY.md §2.1 + §2.2."
+      collapsible
+      defaultCollapsed
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Use column */}
@@ -1813,6 +1818,8 @@ export const Chapter01 = () => (
       titleSans="Grammar"
       titleSerif="& style"
       description="Sentence-level construction. Active voice, second person, short. Source: AGMB_COPY_LIBRARY.md §1 voice principles + §5 microcopy patterns."
+      collapsible
+      defaultCollapsed
     >
       <ol className="flex flex-col gap-5">
         {[
