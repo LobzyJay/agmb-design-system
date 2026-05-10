@@ -4806,7 +4806,7 @@ Typical NHF rate is 6%`}
     >
       <div className="-mx-6 -mb-6">
         <RegulatoryFooter
-          logo={<p className="font-serif font-bold text-ag-cream text-2xl">AGMB</p>}
+          logo={<Logo variant="wordmark-mono-white" height={36} decorative />}
           contact={<p>9 Bankole Street, Victoria Island, Lagos<br />+234 1 234 5678 · hello@agmortgage.ng</p>}
           groups={[
             { title: "Products", links: [{ label: "NHF Mortgage", href: "#" }, { label: "M-REIF Mortgage", href: "#" }, { label: "Construction Finance", href: "#" }] },

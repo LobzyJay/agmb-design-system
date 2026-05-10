@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
 /* ============================================================
+   Tailwind v4 content sources — explicit allow-list
+   ============================================================
+   By default Tailwind v4 walks the entire project (minus .gitignore)
+   scanning every file for class names. That picks up prose-quoted
+   patterns like `shadow-[var(--...)]` inside .md docs and tries to
+   compile them as real classes → broken CSS, HTTP 500.
+
+   Locking the scan to the dirs that actually contain JSX/TSX class
+   strings prevents this whole class of bug. .md / .mdx are scanned
+   only inside `stories/` (Storybook docs).
+   ============================================================ */
+@source "./app/**/*.{ts,tsx,js,jsx}";
+@source "./components/**/*.{ts,tsx,js,jsx}";
+@source "./stories/**/*.{ts,tsx,js,jsx,md,mdx}";
+@source "./lib/**/*.{ts,tsx,js,jsx}";
+@source "./constants/**/*.{ts,tsx,js,jsx}";
+
+/* ============================================================
    AGMB Design Tokens — locked at architecture time
    Sources:
    · PRD §4.2 (colour) — locked

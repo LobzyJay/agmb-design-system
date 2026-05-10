@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { RegulatoryFooter } from "../components/RegulatoryFooter";
+import { Logo } from "../components/Logo";
 
 const meta: Meta<typeof RegulatoryFooter> = {
   title: "Primitives/RegulatoryFooter",
@@ -12,7 +13,7 @@ type Story = StoryObj<typeof RegulatoryFooter>;
 export const Default: Story = {
   render: () => (
     <RegulatoryFooter
-      logo={<p className="bi-serif text-3xl text-ag-cream">AGMB</p>}
+      logo={<Logo variant="wordmark-mono-white" height={36} decorative />}
       contact={
         <>
           info@agmortgagebankplc.com<br />

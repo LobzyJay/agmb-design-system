@@ -3,6 +3,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
+import { Logo } from "@/components/Logo";
 
 // Dedicated sidebar for the /tokens catalogue.
 // Kept separate from the /design sidebar — both routes link to each other
@@ -122,22 +123,20 @@ export const TokensSidebar: React.FC = () => {
         aria-label="Token catalogue"
         className="hidden lg:block lg:sticky lg:top-0 lg:self-start lg:max-h-screen lg:overflow-y-auto bg-ag-white border-r border-ag-border"
       >
-        {/* Wordmark header — same register as /design sidebar */}
+        {/* Wordmark header — same register as /design sidebar.
+            Vector logo landed 2026-05-10 — typographic placeholder retired. */}
         <div className="px-7 pt-10 pb-9">
           <a
             href="/"
             aria-label="AG Mortgage Bank — back to home"
-            className="inline-flex items-baseline gap-2 group focus-visible:outline-none"
+            className="inline-flex items-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ag-gold focus-visible:ring-offset-4 focus-visible:ring-offset-ag-white rounded-sm"
           >
-            <span
-              aria-hidden="true"
-              className="numeric text-[10.5px] uppercase tracking-[0.08em] text-ag-gold/80 group-hover:text-ag-gold transition-token"
-            >
-              A
-            </span>
-            <span className="font-serif font-bold text-ag-navy text-2xl leading-none tracking-[-0.02em] group-hover:text-ag-text transition-token">
-              AGMB
-            </span>
+            <Logo
+              variant="wordmark-coloured"
+              height={40}
+              decorative
+              className="transition-token group-hover:opacity-90"
+            />
           </a>
           <span aria-hidden="true" className="block w-8 border-t border-ag-border mt-4" />
           <p className="bi-label text-ag-muted text-[11px] uppercase tracking-[0.08em] mt-3">
