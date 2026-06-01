@@ -24,6 +24,8 @@ import { Newsroom } from "@/components/sections/Newsroom";
 import { AdvisoryBand } from "@/components/sections/AdvisoryBand";
 import { BentoGrid, BentoTile } from "@/components/sections/BentoGrid";
 import { TileViz } from "@/components/viz/TileViz";
+import { ApplyForm } from "@/components/sections/ApplyForm";
+import { ContactForm } from "@/components/sections/ContactForm";
 
 const NAV = [
   { id: "foundations", label: "Foundations" },
@@ -32,6 +34,7 @@ const NAV = [
   { id: "radii", label: "Radii & motion" },
   { id: "primitives", label: "Primitives" },
   { id: "viz", label: "Viz" },
+  { id: "forms", label: "Forms" },
   { id: "patterns", label: "Patterns" },
 ];
 
@@ -88,7 +91,7 @@ export default function DesignSystem() {
       </aside>
 
       {/* Content */}
-      <main className="flex flex-col gap-24 px-6 py-20 md:px-12 lg:px-16">
+      <main className="flex min-w-0 flex-col gap-24 overflow-x-clip px-6 py-20 md:px-12 lg:px-16">
         <header id="foundations" className="scroll-mt-24 flex max-w-3xl flex-col gap-5">
           <Eyebrow dot="gold" className="text-gold-vivid">AGMB · Design System</Eyebrow>
           <h1 className="h1 text-cream-warm">
@@ -197,8 +200,18 @@ export default function DesignSystem() {
           </Specimen>
         </SpecimenGroup>
 
+        {/* FORMS */}
+        <SpecimenGroup id="forms" eyebrow="Catalogue · 06" title="Forms">
+          <Specimen name="ApplyForm" description="The multi-step mortgage application — step indicator, the active step's fields, back/next nav. Click Continue to walk the steps." surface="none">
+            <div className="w-full"><ApplyForm /></div>
+          </Specimen>
+          <Specimen name="ContactForm" description="The contact twin — a navy info panel beside a cream form panel." surface="none">
+            <div className="w-full"><ContactForm eyebrow="Contact" heading="Talk to a mortgage desk." copy="We reply within one working day." rows={[{ label: "Phone", value: "+234 807 609 4107" }, { label: "Email", value: "info@agmortgagebankplc.com" }, { label: "Head office", value: "Lagos, Nigeria", sub: "Mon–Sat, 8am–5pm" }]} /></div>
+          </Specimen>
+        </SpecimenGroup>
+
         {/* PATTERNS */}
-        <SpecimenGroup id="patterns" eyebrow="Catalogue · 06" title="Patterns">
+        <SpecimenGroup id="patterns" eyebrow="Catalogue · 07" title="Patterns">
           <Specimen name="FactStrip" description="The cream pill of facts that leaks over the hero viz." surface="navy">
             <div className="w-full"><FactStrip facts={[{ label: "Years", value: "20+", caption: "CBN-regulated", dot: "gold" }, { label: "Disbursed", value: "₦2.8B", caption: "last 12 months", dot: "green" }, { label: "Families", value: "97", caption: "homes financed", dot: "navy" }]} /></div>
           </Specimen>
