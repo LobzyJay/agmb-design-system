@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Inter_Tight, Libre_Baskerville } from "next/font/google";
 import "./globals.css";
+import "./agmb-site.css";
 
 // Type stack — exactly the three faces the live agmb-website loads from Google Fonts.
 const inter = Inter({

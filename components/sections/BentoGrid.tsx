@@ -2,61 +2,63 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { TileViz } from "@/components/viz/TileViz";
 
-// AGMB BentoTile / BentoGrid — the product grid. Each tile carries a live dithered
-// silhouette viz (the site's tile-viz) in its accent colour, with the content
-// pinned above it: category eyebrow, rate, name, copy, link.
+// AGMB BentoTile / BentoGrid — uses the site's verbatim .tile / .tile-viz CSS
+// (app/agmb-site.css), so scale + structure match the live site exactly: a cream
+// tile with content on the left and the dithered viz on the right (46% / flagship
+// grid). The viz canvas is the site's tile-viz__canvas, in the per-product accent.
 
 export interface BentoTileProps {
   category: React.ReactNode;
   name: React.ReactNode;
   copy: React.ReactNode;
   rate?: React.ReactNode;
+  link?: React.ReactNode;
   href?: string;
   flagship?: boolean;
-  /** Silhouette kind for the viz: nhf | mreif | construction | reif | commercial. */
+  icon?: React.ReactNode;
+  /** Silhouette kind: nhf | mreif | construction | reif | commercial. */
   viz?: string;
   /** Accent colour (hex) for the viz dot field. */
   accent?: string;
   className?: string;
 }
 
-export const BentoTile: React.FC<BentoTileProps> = ({ category, name, copy, rate, href, flagship, viz, accent = "#1F4FA8", className }) => {
-  const Tag: React.ElementType = href ? "a" : "div";
-  return (
-    <Tag
-      href={href}
-      className={cn(
-        "group relative flex min-h-[300px] flex-col justify-between gap-6 overflow-hidden rounded-2xl border border-cream-warm/10 bg-navy p-7 transition",
-        href && "hover:-translate-y-0.5 hover:shadow-[var(--shadow-tile-hover)]",
-        flagship ? "md:row-span-2" : "",
-        className,
-      )}
-    >
-      {viz && (
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] opacity-90">
-          <TileViz viz={viz} accent={accent} />
-        </div>
-      )}
-      <div className="relative z-[1] flex items-center justify-between">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted-on-navy">{category}</span>
-        {rate && <span className="numeric text-cream-warm" style={{ fontSize: 20 }}>{rate}</span>}
+export const BentoTile: React.FC<BentoTileProps> = ({ category, name, copy, rate, link = "Learn more", href = "#", flagship, icon, viz, accent = "#1F4FA8", className }) => (
+  <a href={href} className={cn("tile", flagship && "tile--flagship", className)}>
+    <div className="tile__content">
+      <div className="tile__top">
+        {icon && <span className="tile__icon">{icon}</span>}
+        <span className="tile__cat">{category}</span>
       </div>
-      <div className="relative z-[1] flex flex-col gap-2">
-        <h3 className={cn("font-medium tracking-[-0.03em] text-cream-warm", flagship ? "text-3xl" : "text-2xl")}>{name}</h3>
-        <p className="max-w-[26ch] text-sm leading-relaxed text-text-muted-on-navy">{copy}</p>
-        {href && <span className="mt-2 text-sm text-gold-vivid transition">Explore →</span>}
+      {rate && <span className="tile__rate">{rate}</span>}
+      <div>
+        <h3 className="tile__name">{name}</h3>
+        <p className="tile__copy">{copy}</p>
+        <span className="tile__link">{link} →</span>
       </div>
-    </Tag>
-  );
-};
+    </div>
+    {viz && (
+      <div className="tile-viz">
+        <TileViz viz={viz} accent={accent} />
+      </div>
+    )}
+  </a>
+);
 
 export interface BentoGridProps {
-  children: React.ReactNode;
+  /** Flagship tile + a 2-tile stack on top; two tiles below. */
+  flagship: React.ReactElement;
+  stack: [React.ReactElement, React.ReactElement];
+  bottom: [React.ReactElement, React.ReactElement];
   className?: string;
 }
 
-export const BentoGrid: React.FC<BentoGridProps> = ({ children, className }) => (
-  <section className={cn("bg-black px-6 py-24 md:px-10", className)}>
-    <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-4 md:grid-cols-3">{children}</div>
-  </section>
+export const BentoGrid: React.FC<BentoGridProps> = ({ flagship, stack, bottom, className }) => (
+  <div className={cn("bento", className)}>
+    <div className="bento__top">
+      {flagship}
+      <div className="tile__stack">{stack}</div>
+    </div>
+    <div className="bento__bot">{bottom}</div>
+  </div>
 );

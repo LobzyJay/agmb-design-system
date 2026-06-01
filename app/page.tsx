@@ -218,8 +218,20 @@ export default function DesignSystem() {
           <Specimen name="PartnersMarquee" surface="navy">
             <div className="w-full"><PartnersMarquee items={["Central Bank of Nigeria", "NDIC", "ISO 9001:2015", "NMRC", "Federal Mortgage Bank"]} /></div>
           </Specimen>
-          <Specimen name="Product bento" surface="none">
-            <div className="w-full"><BentoGrid className="!bg-transparent !px-0 !py-0"><BentoTile flagship viz="nhf" accent="#22C55E" category="Mortgage" name="NHF Mortgage" rate="6.0%" copy="The National Housing Fund route for working Nigerians." href="#" /><BentoTile viz="mreif" accent="#F0C441" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed." href="#" /><BentoTile viz="commercial" accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use." href="#" /></BentoGrid></div>
+          <Specimen name="Product bento" description="The site's product grid — cream tiles with the dithered viz on the right. Flagship + 2-stack on top, two tiles below. Hover a tile to lift it and displace the viz dots." surface="none">
+            <div className="w-full">
+              <BentoGrid
+                flagship={<BentoTile flagship viz="nhf" accent="#1A7A4A" category="Mortgage" name="NHF Mortgage" rate="6.0% p.a." copy="The National Housing Fund route for working Nigerians on a payslip — up to 30 years." link="Check NHF eligibility" />}
+                stack={[
+                  <BentoTile key="m" viz="mreif" accent="#1F4FA8" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed, on cash flow." />,
+                  <BentoTile key="c" viz="construction" accent="#E0B040" category="Build" name="Construction Finance" rate="16%" copy="Stage-by-stage drawdowns." />,
+                ]}
+                bottom={[
+                  <BentoTile key="x" viz="commercial" accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use developments." />,
+                  <BentoTile key="r" viz="reif" accent="#1A7A4A" category="Invest" name="Real Estate Investment" rate="14%" copy="Income-property finance for investors." />,
+                ]}
+              />
+            </div>
           </Specimen>
           <Specimen name="CalculatorPanel" description="Twin-panel calculator — segmented scenario + sliders → navy output." surface="none">
             <div className="w-full"><CalculatorPanel className="!bg-transparent !px-0 !py-0" /></div>
