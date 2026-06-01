@@ -23,10 +23,13 @@ export interface TileVizProps {
   viz: keyof typeof SILHOUETTES | string;
   /** Accent colour (hex) for the dot field. */
   accent?: string;
+  /** Aspect ratio (w:h) the silhouette is drawn at, so it never stretches to
+   *  the container. Skylines suit wider (≈2.6), houses ≈1.6. */
+  ar?: number;
   className?: string;
 }
 
-export const TileViz: React.FC<TileVizProps> = ({ viz, accent = "#22C55E", className }) => {
+export const TileViz: React.FC<TileVizProps> = ({ viz, accent = "#22C55E", ar = 1.7, className }) => {
   const hostRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
@@ -59,7 +62,18 @@ export const TileViz: React.FC<TileVizProps> = ({ viz, accent = "#22C55E", class
       const off = document.createElement("canvas");
       off.width = Math.floor(cw); off.height = Math.floor(ch);
       const octx = off.getContext("2d")!;
-      silhouette!(octx, off.width, off.height);
+      // Draw the silhouette inside a fixed-AR box so it keeps its proportions
+      // regardless of the container shape: fit by the tighter axis, centre
+      // horizontally, anchor to the bottom (so the building stays grounded).
+      let bw = off.width;
+      let bh = bw / ar;
+      if (bh > off.height) { bh = off.height; bw = bh * ar; }
+      const ox = (off.width - bw) / 2;
+      const oy = off.height - bh;
+      octx.save();
+      octx.translate(ox, oy);
+      silhouette!(octx, bw, bh);
+      octx.restore();
       const data = octx.getImageData(0, 0, off.width, off.height).data;
 
       particles = [];

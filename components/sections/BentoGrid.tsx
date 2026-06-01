@@ -20,10 +20,12 @@ export interface BentoTileProps {
   viz?: string;
   /** Accent colour (hex) for the viz dot field. */
   accent?: string;
+  /** Viz aspect ratio (w:h) so the silhouette never stretches to the tile. */
+  ar?: number;
   className?: string;
 }
 
-export const BentoTile: React.FC<BentoTileProps> = ({ category, name, copy, rate, link = "Learn more", href = "#", flagship, icon, viz, accent = "#1F4FA8", className }) => (
+export const BentoTile: React.FC<BentoTileProps> = ({ category, name, copy, rate, link = "Learn more", href = "#", flagship, icon, viz, accent = "#1F4FA8", ar, className }) => (
   <a href={href} className={cn("tile", flagship && "tile--flagship", className)}>
     <div className="tile__content">
       <div className="tile__top">
@@ -39,7 +41,7 @@ export const BentoTile: React.FC<BentoTileProps> = ({ category, name, copy, rate
     </div>
     {viz && (
       <div className="tile-viz">
-        <TileViz viz={viz} accent={accent} />
+        <TileViz viz={viz} accent={accent} ar={ar} />
       </div>
     )}
   </a>

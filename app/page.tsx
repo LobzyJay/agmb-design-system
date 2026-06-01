@@ -39,11 +39,11 @@ const NAV = [
 ];
 
 const VIZ = [
-  { kind: "nhf", label: "NHF · house", accent: "#22C55E" },
-  { kind: "mreif", label: "M-REIF · refinance", accent: "#F0C441" },
-  { kind: "construction", label: "Construction · phases", accent: "#1F4FA8" },
-  { kind: "reif", label: "REIF · skyline", accent: "#E0B040" },
-  { kind: "commercial", label: "Commercial · storefront", accent: "#22C55E" },
+  { kind: "nhf", label: "NHF · house", accent: "#1A7A4A", ar: 1.5 },
+  { kind: "mreif", label: "M-REIF · refinance", accent: "#1F4FA8", ar: 1.8 },
+  { kind: "construction", label: "Construction · phases", accent: "#E0B040", ar: 2.4 },
+  { kind: "reif", label: "REIF · skyline", accent: "#1A7A4A", ar: 2.8 },
+  { kind: "commercial", label: "Commercial · storefront", accent: "#1F4FA8", ar: 1.7 },
 ];
 
 const BRAND = [
@@ -190,8 +190,8 @@ export default function DesignSystem() {
             <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3">
               {VIZ.map((v) => (
                 <div key={v.kind} className="flex flex-col gap-2">
-                  <div className="h-40 overflow-hidden rounded-xl border border-cream-warm/10 bg-navy">
-                    <TileViz viz={v.kind} accent={v.accent} />
+                  <div className="aspect-[16/10] overflow-hidden rounded-xl border border-cream-warm/10 bg-navy">
+                    <TileViz viz={v.kind} accent={v.accent} ar={v.ar} />
                   </div>
                   <span className="text-[10.5px] text-text-muted-on-navy" style={{ fontFamily: "var(--font-numeric)" }}>{v.label}</span>
                 </div>
@@ -221,14 +221,14 @@ export default function DesignSystem() {
           <Specimen name="Product bento" description="The site's product grid — cream tiles with the dithered viz on the right. Flagship + 2-stack on top, two tiles below. Hover a tile to lift it and displace the viz dots." surface="none">
             <div className="w-full">
               <BentoGrid
-                flagship={<BentoTile flagship viz="nhf" accent="#1A7A4A" category="Mortgage" name="NHF Mortgage" rate="6.0% p.a." copy="The National Housing Fund route for working Nigerians on a payslip — up to 30 years." link="Check NHF eligibility" />}
+                flagship={<BentoTile flagship viz="nhf" ar={1.5} accent="#1A7A4A" category="Mortgage" name="NHF Mortgage" rate="6.0% p.a." copy="The National Housing Fund route for working Nigerians on a payslip — up to 30 years." link="Check NHF eligibility" />}
                 stack={[
-                  <BentoTile key="m" viz="mreif" accent="#1F4FA8" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed, on cash flow." />,
-                  <BentoTile key="c" viz="construction" accent="#E0B040" category="Build" name="Construction Finance" rate="16%" copy="Stage-by-stage drawdowns." />,
+                  <BentoTile key="m" viz="mreif" ar={1.8} accent="#1F4FA8" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed, on cash flow." />,
+                  <BentoTile key="c" viz="construction" ar={2.4} accent="#E0B040" category="Build" name="Construction Finance" rate="16%" copy="Stage-by-stage drawdowns." />,
                 ]}
                 bottom={[
-                  <BentoTile key="x" viz="commercial" accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use developments." />,
-                  <BentoTile key="r" viz="reif" accent="#1A7A4A" category="Invest" name="Real Estate Investment" rate="14%" copy="Income-property finance for investors." />,
+                  <BentoTile key="x" viz="commercial" ar={1.7} accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use developments." />,
+                  <BentoTile key="r" viz="reif" ar={2.8} accent="#1A7A4A" category="Invest" name="Real Estate Investment" rate="14%" copy="Income-property finance for investors." />,
                 ]}
               />
             </div>
