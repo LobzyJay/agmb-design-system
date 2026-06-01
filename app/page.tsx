@@ -223,8 +223,8 @@ export default function DesignSystem() {
           <Specimen name="RegulatoryFooter" description="The site footer — navy panel, brand + columns, regulatory disclosures." surface="none">
             <div className="w-full"><RegulatoryFooter tagline="AG Mortgage Bank Plc — a CBN-licensed Primary Mortgage Bank, established 2004." columns={[{ title: "Products", links: [{ label: "NHF Mortgage", href: "#" }, { label: "M-REIF", href: "#" }, { label: "Commercial", href: "#" }] }, { title: "Company", links: [{ label: "About", href: "#" }, { label: "Insights", href: "#" }, { label: "Contact", href: "#" }] }, { title: "Legal", links: [{ label: "Privacy", href: "#" }, { label: "Terms", href: "#" }, { label: "Disclosures", href: "#" }] }]} disclosures={[{ label: "CBN-licensed PMI", href: "#" }, { label: "NDIC-insured", href: "#" }, { label: "ISO 9001:2015", href: "#" }, { label: "RC 123456", href: "#" }]} /></div>
           </Specimen>
-          <Specimen name="PartnersMarquee" surface="navy">
-            <div className="w-full"><PartnersMarquee items={["Central Bank of Nigeria", "NDIC", "ISO 9001:2015", "NMRC", "Federal Mortgage Bank"]} /></div>
+          <Specimen name="PartnersMarquee" description="Edge-masked logo marquee — the nine real partner logos, whitewashed, looping." surface="navy">
+            <div className="w-full"><PartnersMarquee /></div>
           </Specimen>
           <Specimen name="Product bento" description="The site's product grid — cream tiles with the dithered viz on the right. Flagship + 2-stack on top, two tiles below. Hover a tile to lift it and displace the viz dots." surface="none">
             <div className="w-full">
