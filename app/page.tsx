@@ -21,6 +21,8 @@ import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
 import { CalculatorPanel } from "@/components/sections/CalculatorPanel";
 import { CommunityTabs } from "@/components/sections/CommunityTabs";
 import { Newsroom } from "@/components/sections/Newsroom";
+import { StatsRow } from "@/components/sections/StatsRow";
+import { RegulatoryFooter } from "@/components/sections/RegulatoryFooter";
 import { AdvisoryBand } from "@/components/sections/AdvisoryBand";
 import { BentoGrid, BentoTile } from "@/components/sections/BentoGrid";
 import { TileViz } from "@/components/viz/TileViz";
@@ -215,6 +217,12 @@ export default function DesignSystem() {
           <Specimen name="FactStrip" description="The cream pill of facts that leaks over the hero viz." surface="navy">
             <div className="w-full"><FactStrip facts={[{ label: "Years", value: "20+", caption: "CBN-regulated", dot: "gold" }, { label: "Disbursed", value: "₦2.8B", caption: "last 12 months", dot: "green" }, { label: "Families", value: "97", caption: "homes financed", dot: "navy" }]} /></div>
           </Specimen>
+          <Specimen name="StatsRow" description="Cream stats band — 80px Inter Tight numerics." surface="cream">
+            <div className="w-full"><StatsRow eyebrow="By the numbers" heading="Two decades of careful lending." stats={[{ eyebrow: "Years regulated", value: "20+", caption: "CBN since 2004" }, { eyebrow: "Disbursed", value: "₦2.8B", caption: "last 12 months" }, { eyebrow: "Families", value: "97", caption: "homes financed" }, { eyebrow: "Certified", value: "ISO 9001", caption: "quality management" }]} /></div>
+          </Specimen>
+          <Specimen name="RegulatoryFooter" description="The site footer — navy panel, brand + columns, regulatory disclosures." surface="none">
+            <div className="w-full"><RegulatoryFooter tagline="AG Mortgage Bank Plc — a CBN-licensed Primary Mortgage Bank, established 2004." columns={[{ title: "Products", links: [{ label: "NHF Mortgage", href: "#" }, { label: "M-REIF", href: "#" }, { label: "Commercial", href: "#" }] }, { title: "Company", links: [{ label: "About", href: "#" }, { label: "Insights", href: "#" }, { label: "Contact", href: "#" }] }, { title: "Legal", links: [{ label: "Privacy", href: "#" }, { label: "Terms", href: "#" }, { label: "Disclosures", href: "#" }] }]} disclosures={[{ label: "CBN-licensed PMI", href: "#" }, { label: "NDIC-insured", href: "#" }, { label: "ISO 9001:2015", href: "#" }, { label: "RC 123456", href: "#" }]} /></div>
+          </Specimen>
           <Specimen name="PartnersMarquee" surface="navy">
             <div className="w-full"><PartnersMarquee items={["Central Bank of Nigeria", "NDIC", "ISO 9001:2015", "NMRC", "Federal Mortgage Bank"]} /></div>
           </Specimen>
@@ -236,8 +244,8 @@ export default function DesignSystem() {
           <Specimen name="CalculatorPanel" description="Twin-panel calculator (site CSS) — segmented route + sliders → navy output, real reducing-balance math + cap notice." surface="none">
             <div className="w-full"><CalculatorPanel /></div>
           </Specimen>
-          <Specimen name="CommunityTabs" surface="none">
-            <div className="w-full"><CommunityTabs className="!px-0 !py-0" tabs={[{ num: "01", label: "First-time buyers", art: { eyebrow: "NHF", statAccent: "97", stat: "families", caption: "financed in the last year" }, body: <p>Built for working Nigerians on a payslip.</p> }, { num: "02", label: "Self-employed", art: { eyebrow: "M-REIF", statAccent: "₦2.8B", stat: "disbursed", caption: "in 12 months" }, body: <p>Underwritten on cash flow.</p> }]} /></div>
+          <Specimen name="CommunityTabs" description="Cream community section — hairline tabs + navy stat-art panel beside prose." surface="cream">
+            <div className="w-full"><CommunityTabs tabs={[{ num: "01", label: "First-time buyers", art: { eyebrow: "NHF Mortgage", statAccent: "97", stat: "families", caption: "financed into first homes in the last year" }, body: <><p>The National Housing Fund route is built for working Nigerians on a payslip — we handle the FMBN paperwork end to end.</p><p>Contributions you have already made count toward your deposit.</p></> }, { num: "02", label: "Self-employed", art: { eyebrow: "M-REIF", statAccent: "₦2.8B", stat: "disbursed", caption: "across mortgage refinance in 12 months" }, body: <p>No payslip, no problem — M-REIF underwrites on business cash flow and rental income.</p> }, { num: "03", label: "Diaspora", art: { eyebrow: "Commercial", statAccent: "20", stat: "+ years", caption: "CBN-regulated origination, audited every step" }, body: <p>Buy or build from abroad with a naira mortgage and a local advisor at every milestone.</p> }]} /></div>
           </Specimen>
           <Specimen name="Newsroom" surface="none">
             <div className="w-full"><Newsroom className="!bg-transparent !px-0 !py-0" featured={{ chip: "Disclosure", meta: "12 May 2026", title: "AGMB posts ₦2.8B in mortgage origination", href: "#" }} stories={[{ meta: "Press · 02 May", title: "M-REIF window reopens for Q2", href: "#" }, { meta: "Insight · 24 Apr", title: "What the new NHF cap means", href: "#" }]} /></div>

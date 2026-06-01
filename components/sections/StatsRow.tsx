@@ -1,29 +1,42 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { Eyebrow } from "@/components/Eyebrow";
-import { Fact, type FactProps } from "@/components/Fact";
 
-// AGMB StatsRow — the cream stats band: an eyebrow + H2 head over a row of facts.
+// AGMB StatsRow — uses the site's verbatim .stat-row / .stat CSS (80px numerics).
+
+export interface StatItem {
+  eyebrow: React.ReactNode;
+  value: React.ReactNode;
+  caption?: React.ReactNode;
+}
 
 export interface StatsRowProps {
   eyebrow?: React.ReactNode;
-  heading: React.ReactNode;
-  stats: Omit<FactProps, "surface">[];
+  heading?: React.ReactNode;
+  stats: StatItem[];
   className?: string;
 }
 
 export const StatsRow: React.FC<StatsRowProps> = ({ eyebrow, heading, stats, className }) => (
-  <section className={cn("bg-cream-warm px-6 py-24 md:px-10", className)}>
-    <div className="mx-auto max-w-[1400px]">
-      <header className="mb-12 flex flex-col gap-3">
-        {eyebrow && <Eyebrow dot="green" className="text-text-muted-on-cream">{eyebrow}</Eyebrow>}
-        <h2 className="h2 text-navy-deep">{heading}</h2>
+  <div className={cn("flex flex-col gap-16", className)}>
+    {(eyebrow || heading) && (
+      <header className="flex flex-col gap-4">
+        {eyebrow && (
+          <span className="flex items-center gap-2.5">
+            <span aria-hidden style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--green-vivid)" }} />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: "rgba(6,26,46,0.7)", fontFamily: "var(--font-sans)" }}>{eyebrow}</span>
+          </span>
+        )}
+        {heading && <h2 className="h2" style={{ color: "var(--navy-deep)" }}>{heading}</h2>}
       </header>
-      <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
-        {stats.map((s, i) => (
-          <Fact key={i} {...s} surface="cream" />
-        ))}
-      </div>
+    )}
+    <div className="stat-row">
+      {stats.map((s, i) => (
+        <div key={i} className="stat">
+          <span className="stat__eyebrow">{s.eyebrow}</span>
+          <span className="stat__numeric">{s.value}</span>
+          {s.caption && <span className="stat__cap">{s.caption}</span>}
+        </div>
+      ))}
     </div>
-  </section>
+  </div>
 );
