@@ -5,19 +5,11 @@ import { SegmentedControl } from "@/components/SegmentedControl";
 import { Slider } from "@/components/Slider";
 import { RatioBar } from "@/components/RatioBar";
 import { Button } from "@/components/Button";
+import { calculate, naira as ngn } from "@/lib/mortgage-calc";
 
 // AGMB CalculatorPanel — the twin-panel calculator: a cream input panel (segmented
-// scenario + sliders) beside a navy output panel (big monthly figure, ratio bar,
-// detail rows). Math is a simple inline annuity here; Phase 5 moves it to lib + tests.
-
-const ngn = (n: number) => "₦" + Math.round(n).toLocaleString("en-NG");
-
-function monthly(principal: number, annualRatePct: number, years: number) {
-  const r = annualRatePct / 100 / 12;
-  const n = years * 12;
-  if (r === 0) return principal / n;
-  return (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-}
+// route + sliders) beside a navy output panel (big monthly figure, ratio bar,
+// detail rows). Math is the real reducing-balance amortize from lib/mortgage-calc.
 
 export interface CalculatorPanelProps {
   className?: string;
@@ -25,17 +17,17 @@ export interface CalculatorPanelProps {
 
 export const CalculatorPanel: React.FC<CalculatorPanelProps> = ({ className }) => {
   const [scenario, setScenario] = React.useState("nhf");
-  const rateFor: Record<string, number> = { nhf: 6, mreif: 9.5, commercial: 18 };
   const [property, setProperty] = React.useState(116_500_000);
   const [downPct, setDownPct] = React.useState(20);
   const [years, setYears] = React.useState(20);
 
-  const rate = rateFor[scenario];
-  const loan = property * (1 - downPct / 100);
-  const m = monthly(loan, rate, years);
-  const totalPaid = m * years * 12;
-  const interest = Math.max(0, totalPaid - loan);
-  const principalShare = totalPaid > 0 ? loan / totalPaid : 0;
+  const c = calculate({ segment: scenario, property, downPct, tenor: years });
+  const rate = c.seg.rate;
+  const loan = c.principal;
+  const m = c.monthly;
+  const totalPaid = c.total;
+  const interest = c.interest;
+  const principalShare = c.principalPct / 100;
 
   return (
     <section className={cn("bg-black px-6 py-24 md:px-10", className)}>
@@ -49,9 +41,15 @@ export const CalculatorPanel: React.FC<CalculatorPanelProps> = ({ className }) =
             options={[
               { value: "nhf", label: "NHF" },
               { value: "mreif", label: "M-REIF" },
-              { value: "commercial", label: "Commercial" },
+              { value: "classic", label: "Classic" },
+              { value: "diaspora", label: "Diaspora" },
             ]}
           />
+          {c.capped && (
+            <p className="rounded-sm bg-navy-deep/[0.04] px-3 py-2 text-xs leading-snug text-text-muted-on-cream">
+              {c.seg.short} caps principal at {ngn(c.seg.cap as number)} — {ngn(c.shortfall)} top-up arranged separately.
+            </p>
+          )}
           <Slider label="Property value" display={ngn(property)} value={property} min={15_000_000} max={300_000_000} step={500_000} onChange={setProperty} />
           <Slider label="Down payment" display={`${downPct}%`} value={downPct} min={5} max={50} step={1} onChange={setDownPct} />
           <Slider label="Tenor" display={`${years} years`} value={years} min={5} max={30} step={1} onChange={setYears} />

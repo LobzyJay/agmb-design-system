@@ -23,6 +23,7 @@ import { CommunityTabs } from "@/components/sections/CommunityTabs";
 import { Newsroom } from "@/components/sections/Newsroom";
 import { AdvisoryBand } from "@/components/sections/AdvisoryBand";
 import { BentoGrid, BentoTile } from "@/components/sections/BentoGrid";
+import { TileViz } from "@/components/viz/TileViz";
 
 const NAV = [
   { id: "foundations", label: "Foundations" },
@@ -30,7 +31,16 @@ const NAV = [
   { id: "type", label: "Typography" },
   { id: "radii", label: "Radii & motion" },
   { id: "primitives", label: "Primitives" },
+  { id: "viz", label: "Viz" },
   { id: "patterns", label: "Patterns" },
+];
+
+const VIZ = [
+  { kind: "nhf", label: "NHF · house", accent: "#22C55E" },
+  { kind: "mreif", label: "M-REIF · refinance", accent: "#F0C441" },
+  { kind: "construction", label: "Construction · phases", accent: "#1F4FA8" },
+  { kind: "reif", label: "REIF · skyline", accent: "#E0B040" },
+  { kind: "commercial", label: "Commercial · storefront", accent: "#22C55E" },
 ];
 
 const BRAND = [
@@ -171,8 +181,24 @@ export default function DesignSystem() {
           </Specimen>
         </SpecimenGroup>
 
+        {/* VIZ */}
+        <SpecimenGroup id="viz" eyebrow="Catalogue · 05" title="Viz">
+          <Specimen name="Dithered tile viz" description="The site's product-tile viz — a per-product silhouette Bayer-dithered into a dot field in the accent colour. Move your cursor over a tile to displace the dots (iron-filings repulsion). Pauses off-screen; static under reduced-motion." surface="none">
+            <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3">
+              {VIZ.map((v) => (
+                <div key={v.kind} className="flex flex-col gap-2">
+                  <div className="h-40 overflow-hidden rounded-xl border border-cream-warm/10 bg-navy">
+                    <TileViz viz={v.kind} accent={v.accent} />
+                  </div>
+                  <span className="text-[10.5px] text-text-muted-on-navy" style={{ fontFamily: "var(--font-numeric)" }}>{v.label}</span>
+                </div>
+              ))}
+            </div>
+          </Specimen>
+        </SpecimenGroup>
+
         {/* PATTERNS */}
-        <SpecimenGroup id="patterns" eyebrow="Catalogue · 05" title="Patterns">
+        <SpecimenGroup id="patterns" eyebrow="Catalogue · 06" title="Patterns">
           <Specimen name="FactStrip" description="The cream pill of facts that leaks over the hero viz." surface="navy">
             <div className="w-full"><FactStrip facts={[{ label: "Years", value: "20+", caption: "CBN-regulated", dot: "gold" }, { label: "Disbursed", value: "₦2.8B", caption: "last 12 months", dot: "green" }, { label: "Families", value: "97", caption: "homes financed", dot: "navy" }]} /></div>
           </Specimen>
@@ -180,7 +206,7 @@ export default function DesignSystem() {
             <div className="w-full"><PartnersMarquee items={["Central Bank of Nigeria", "NDIC", "ISO 9001:2015", "NMRC", "Federal Mortgage Bank"]} /></div>
           </Specimen>
           <Specimen name="Product bento" surface="none">
-            <div className="w-full"><BentoGrid className="!bg-transparent !px-0 !py-0"><BentoTile flagship category="Mortgage" name="NHF Mortgage" rate="6.0%" copy="The National Housing Fund route for working Nigerians." href="#" accent="var(--color-green-vivid)" /><BentoTile category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed." href="#" /><BentoTile category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use." href="#" accent="var(--color-gold-vivid)" /></BentoGrid></div>
+            <div className="w-full"><BentoGrid className="!bg-transparent !px-0 !py-0"><BentoTile flagship viz="nhf" accent="#22C55E" category="Mortgage" name="NHF Mortgage" rate="6.0%" copy="The National Housing Fund route for working Nigerians." href="#" /><BentoTile viz="mreif" accent="#F0C441" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed." href="#" /><BentoTile viz="commercial" accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use." href="#" /></BentoGrid></div>
           </Specimen>
           <Specimen name="CalculatorPanel" description="Twin-panel calculator — segmented scenario + sliders → navy output." surface="none">
             <div className="w-full"><CalculatorPanel className="!bg-transparent !px-0 !py-0" /></div>
