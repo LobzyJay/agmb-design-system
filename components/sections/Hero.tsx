@@ -1,12 +1,10 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { StatusLine } from "@/components/StatusLine";
-import { Button } from "@/components/Button";
-import { FactStrip, type FactItem } from "@/components/sections/FactStrip";
+import { asset } from "@/lib/site-config";
 
-// AGMB Hero — the centred opening: status line, an Inter H1 with a green serif-italic
-// accent word, lede, dual CTAs, a viz panel, and the leaking fact strip.
-// The viz is a static fallback panel here; the canvas building lands in Phase 5.
+// AGMB Hero — the centred opening, documented statically with the site's parts:
+// a status row (green pulse + uppercase items), an Inter H1 with a serif-italic
+// accent word, lede, dual CTAs, over the particle-building viz (masked).
 
 export interface HeroProps {
   status: React.ReactNode[];
@@ -15,40 +13,32 @@ export interface HeroProps {
   lede: React.ReactNode;
   primary?: { label: string; href: string };
   secondary?: { label: string; href: string };
-  facts: FactItem[];
+  /** Background viz image (defaults to the particle building). */
+  vizImage?: string;
   className?: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({ status, heading, lede, primary, secondary, facts, className }) => (
-  <section className={cn("relative bg-navy-deep", className)}>
-    <div className="mx-auto flex max-w-[1100px] flex-col items-center gap-6 px-6 pb-8 pt-20 text-center md:pt-28">
-      <StatusLine items={status} />
-      <h1 className="h1 max-w-3xl text-cream-warm">
-        {heading.map((p, i) => (
-          <React.Fragment key={i}>
-            {p.accent ? <span className="serif-accent">{p.text}</span> : p.text}
-          </React.Fragment>
-        ))}
-      </h1>
-      <p className="lede max-w-xl text-text-muted-on-navy">{lede}</p>
-      <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-        {primary && <Button variant="primary" href={primary.href}>{primary.label}</Button>}
-        {secondary && <Button variant="secondary" href={secondary.href}>{secondary.label}</Button>}
-      </div>
-
-      {/* Viz — static fallback (canvas building in Phase 5) */}
-      <div
-        className="mt-10 h-[280px] w-full max-w-3xl rounded-2xl border border-cream-warm/10 md:h-[360px]"
-        style={{
-          background:
-            "radial-gradient(120% 80% at 50% 0%, rgba(31,79,168,0.25), transparent 60%), repeating-linear-gradient(90deg, rgba(250,243,232,0.06) 0 1px, transparent 1px 28px), repeating-linear-gradient(0deg, rgba(250,243,232,0.06) 0 1px, transparent 1px 28px)",
-        }}
-        aria-hidden
-      />
-    </div>
-
-    <div className="px-6 pb-10 md:px-10">
-      <div className="relative z-[1] -mt-16 md:-mt-24"><FactStrip facts={facts} /></div>
+export const Hero: React.FC<HeroProps> = ({ status, heading, lede, primary, secondary, vizImage = "/images/agmb-particle-building.png", className }) => (
+  <section className={cn("hero-doc", className)}>
+    <span className="hero-doc__viz" aria-hidden style={{ backgroundImage: `url(${asset(vizImage)})` }} />
+    <span className="status-row">
+      <span className="pulse" aria-hidden />
+      {status.map((s, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && <span className="dot">/</span>}
+          <span>{s}</span>
+        </React.Fragment>
+      ))}
+    </span>
+    <h1 className="h1">
+      {heading.map((p, i) => (
+        <React.Fragment key={i}>{p.accent ? <span className="serif-accent">{p.text}</span> : p.text}</React.Fragment>
+      ))}
+    </h1>
+    <p className="hero__lede">{lede}</p>
+    <div className="ctas">
+      {primary && <a className="cta cta--primary" href={primary.href}>{primary.label}</a>}
+      {secondary && <a className="cta cta--secondary" href={secondary.href}>{secondary.label}</a>}
     </div>
   </section>
 );

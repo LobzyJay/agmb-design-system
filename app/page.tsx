@@ -23,6 +23,8 @@ import { CommunityTabs } from "@/components/sections/CommunityTabs";
 import { Newsroom } from "@/components/sections/Newsroom";
 import { StatsRow } from "@/components/sections/StatsRow";
 import { RegulatoryFooter } from "@/components/sections/RegulatoryFooter";
+import { SiteNav } from "@/components/sections/SiteNav";
+import { Hero } from "@/components/sections/Hero";
 import { AdvisoryBand } from "@/components/sections/AdvisoryBand";
 import { BentoGrid, BentoTile } from "@/components/sections/BentoGrid";
 import { TileViz } from "@/components/viz/TileViz";
@@ -214,6 +216,23 @@ export default function DesignSystem() {
 
         {/* PATTERNS */}
         <SpecimenGroup id="patterns" eyebrow="Catalogue · 07" title="Patterns">
+          <Specimen name="SiteNav" description="The site header — transparent over the hero, condensing into a floating glass pill on scroll. Both states shown." surface="navy">
+            <div className="flex w-full flex-col gap-4">
+              <SiteNav links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
+              <SiteNav scrolled links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
+            </div>
+          </Specimen>
+          <Specimen name="Hero" description="The centred opening — status row, Inter H1 with a serif-italic accent word, lede, dual CTAs, over the particle-building viz." surface="none">
+            <div className="w-full">
+              <Hero
+                status={["CBN-licensed since 2004", "NDIC-insured"]}
+                heading={[{ text: "Homes for working " }, { text: "Nigerians", accent: true }, { text: ", financed with care." }]}
+                lede="A CBN-regulated Primary Mortgage Bank. ₦2.8B disbursed to 97 families in the last year alone."
+                primary={{ label: "Start your application", href: "#" }}
+                secondary={{ label: "See mortgage types", href: "#" }}
+              />
+            </div>
+          </Specimen>
           <Specimen name="FactStrip" description="The cream pill of facts that leaks over the hero viz." surface="navy">
             <div className="w-full"><FactStrip facts={[{ label: "Years", value: "20+", caption: "CBN-regulated", dot: "gold" }, { label: "Disbursed", value: "₦2.8B", caption: "last 12 months", dot: "green" }, { label: "Families", value: "97", caption: "homes financed", dot: "navy" }]} /></div>
           </Specimen>
