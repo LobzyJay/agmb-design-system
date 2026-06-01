@@ -27,7 +27,6 @@ import { SiteNav } from "@/components/sections/SiteNav";
 import { Hero } from "@/components/sections/Hero";
 import { DirectorsGrid } from "@/components/sections/DirectorsGrid";
 import { ProductHero, Eligibility, Documents, RatePanel, UseCases, HowItWorks, Faq, ProductCtaCard } from "@/components/sections/Products";
-import { ClippingsBoard } from "@/components/sections/ClippingsBoard";
 import { AdvisoryBand } from "@/components/sections/AdvisoryBand";
 import { BentoGrid, BentoTile } from "@/components/sections/BentoGrid";
 import { TileViz } from "@/components/viz/TileViz";
@@ -44,7 +43,6 @@ const NAV = [
   { id: "forms", label: "Forms" },
   { id: "patterns", label: "Patterns" },
   { id: "about", label: "About" },
-  { id: "insights", label: "Insights" },
   { id: "products", label: "Products" },
 ];
 
@@ -254,14 +252,14 @@ export default function DesignSystem() {
           <Specimen name="Product bento" description="The site's product grid — cream tiles with the dithered viz on the right. Flagship + 2-stack on top, two tiles below. Hover a tile to lift it and displace the viz dots." surface="none">
             <div className="w-full">
               <BentoGrid
-                flagship={<BentoTile flagship viz="nhf" ar={1.5} accent="#1A7A4A" category="Mortgage" name="NHF Mortgage" rate="6.0% p.a." copy="The National Housing Fund route for working Nigerians on a payslip — up to 30 years." link="Check NHF eligibility" />}
+                flagship={<BentoTile flagship viz="nhf" ar={1.5} vizScale={1.5} accent="#1A7A4A" category="Mortgage" name="NHF Mortgage" rate="6.0% p.a." copy="The National Housing Fund route for working Nigerians on a payslip — up to 30 years." link="Check NHF eligibility" />}
                 stack={[
-                  <BentoTile key="m" viz="mreif" ar={1.8} accent="#1F4FA8" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed, on cash flow." />,
-                  <BentoTile key="c" viz="construction" ar={2.4} accent="#E0B040" category="Build" name="Construction Finance" rate="16%" copy="Stage-by-stage drawdowns." />,
+                  <BentoTile key="m" viz="mreif" ar={1.4} vizScale={1.9} accent="#1F4FA8" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed." />,
+                  <BentoTile key="c" viz="construction" ar={1.8} vizScale={1.9} accent="#E0B040" category="Build" name="Construction" rate="16%" copy="Stage-by-stage drawdowns." />,
                 ]}
                 bottom={[
-                  <BentoTile key="x" viz="commercial" ar={1.7} accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use developments." />,
-                  <BentoTile key="r" viz="reif" ar={2.8} accent="#1A7A4A" category="Invest" name="Real Estate Investment" rate="14%" copy="Income-property finance for investors." />,
+                  <BentoTile key="x" viz="commercial" ar={1.4} vizScale={1.9} accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use." />,
+                  <BentoTile key="r" viz="reif" ar={1.9} vizScale={1.8} accent="#1A7A4A" category="Invest" name="Real Estate" rate="14%" copy="Income-property finance." />,
                 ]}
               />
             </div>
@@ -273,7 +271,7 @@ export default function DesignSystem() {
             <div className="w-full"><CommunityTabs tabs={[{ num: "01", label: "First-time buyers", art: { eyebrow: "NHF Mortgage", statAccent: "97", stat: "families", caption: "financed into first homes in the last year" }, body: <><p>The National Housing Fund route is built for working Nigerians on a payslip — we handle the FMBN paperwork end to end.</p><p>Contributions you have already made count toward your deposit.</p></> }, { num: "02", label: "Self-employed", art: { eyebrow: "M-REIF", statAccent: "₦2.8B", stat: "disbursed", caption: "across mortgage refinance in 12 months" }, body: <p>No payslip, no problem — M-REIF underwrites on business cash flow and rental income.</p> }, { num: "03", label: "Diaspora", art: { eyebrow: "Commercial", statAccent: "20", stat: "+ years", caption: "CBN-regulated origination, audited every step" }, body: <p>Buy or build from abroad with a naira mortgage and a local advisor at every milestone.</p> }]} /></div>
           </Specimen>
           <Specimen name="Newsroom" surface="none">
-            <div className="w-full"><Newsroom className="!bg-transparent !px-0 !py-0" featured={{ chip: "Disclosure", meta: "12 May 2026", title: "AGMB posts ₦2.8B in mortgage origination", href: "#" }} stories={[{ meta: "Press · 02 May", title: "M-REIF window reopens for Q2", href: "#" }, { meta: "Insight · 24 Apr", title: "What the new NHF cap means", href: "#" }]} /></div>
+            <div className="w-full"><Newsroom className="!bg-transparent !px-0 !py-0" featured={{ chip: "Disclosure", meta: "12 May 2026", title: "AGMB posts ₦2.8B in mortgage origination", image: "/images/agmb-staff-meeting.webp", href: "#" }} stories={[{ meta: "Press · 02 May", title: "M-REIF window reopens for Q2", href: "#" }, { meta: "Insight · 24 Apr", title: "What the new NHF cap means", href: "#" }]} /></div>
           </Specimen>
           <Specimen name="AdvisoryBand" surface="none">
             <div className="w-full"><AdvisoryBand eyebrow="Advisory" title="Talk to a mortgage advisor" copy="Free, no obligation. Real people who close Nigerian mortgages every week." cta={{ label: "Book a call", href: "#" }} stat={{ accent: "3", value: "advisors", sub: "on call right now, Mon–Sat" }} /></div>
@@ -284,36 +282,22 @@ export default function DesignSystem() {
         <SpecimenGroup id="about" eyebrow="Pages · 08" title="About">
           <Specimen name="DirectorsGrid · board" description="Board of directors — dark cards, gold border + role, initials portrait." surface="navy">
             <div className="w-full min-w-0"><DirectorsGrid directors={[
-              { name: "Adaeze Okafor", role: "Chairman", bio: "Two decades in Nigerian financial services and housing policy." },
-              { name: "Emeka Nwabufo", role: "Managing Director / CEO", bio: "Led AGMB's M-REIF first-mover programme since 2019." },
+              { name: "Adaeze Okafor", role: "Chairman", photo: "/images/agmb-mgmt-obi.jpg", bio: "Two decades in Nigerian financial services and housing policy." },
+              { name: "Emeka Nwabufo", role: "Managing Director / CEO", photo: "/images/agmb-dir-nwabufo.jpg", bio: "Led AGMB's M-REIF first-mover programme since 2019." },
             ]} /></div>
           </Specimen>
           <Specimen name="DirectorsGrid · exec (four-up)" description="Management team — compact cream cards, navy text." surface="cream">
             <div className="w-full min-w-0"><DirectorsGrid layout="four" exec directors={[
-              { name: "Ngozi Madukwe", role: "Chief Risk Officer" },
-              { name: "Tunde Laleye", role: "Chief Financial Officer" },
-              { name: "Aisha Mosuro", role: "Head of Mortgages" },
-              { name: "Chidi Akachi", role: "Company Secretary" },
-            ]} /></div>
-          </Specimen>
-        </SpecimenGroup>
-
-        {/* INSIGHTS */}
-        <SpecimenGroup id="insights" eyebrow="Pages · 09" title="Insights">
-          <Specimen name="ClippingsBoard" description="The newsroom's torn-newspaper clippings — paper stock, grain, clip-path torn edges, slight rotation. Libre Baskerville headlines on the paper/ink palette." surface="none">
-            <div className="w-full min-w-0"><ClippingsBoard clippings={[
-              { source: "Business Day · 12 May 2026", headline: "AGMB eyes 2030 housing target with M-REIF expansion", dek: "The bank's refinance programme has disbursed ₦2.8B over the last year." },
-              { source: "Nairametrics · 02 May 2026", headline: "AGMB + Cutstruct partner on construction finance pilot" },
-              { source: "Agusto & Co · Apr 2026", headline: "Agusto upgrades AGMB outlook to stable", dek: "Citing improved asset quality and NHF origination volume." },
-              { source: "The Cable · 18 Apr 2026", headline: "Shaping a livable future: AGMB on housing for working Nigerians" },
-              { source: "Proshare · 09 Apr 2026", headline: "20% ROE: inside AGMB's 2025 results", dek: "Audited completions reached 97, up year on year." },
-              { source: "Punch · 28 Mar 2026", headline: "AGMB renews ISO 9001:2015 certification" },
+              { name: "Ngozi Madukwe", role: "Chief Risk Officer", photo: "/images/agmb-mgmt-madukwe.jpg" },
+              { name: "Tunde Laleye", role: "Chief Financial Officer", photo: "/images/agmb-mgmt-laleye.jpg" },
+              { name: "Aisha Mosuro", role: "Head of Mortgages", photo: "/images/agmb-mgmt-mosuro.jpg" },
+              { name: "Chidi Akachi", role: "Company Secretary", photo: "/images/agmb-mgmt-akachi.jpg" },
             ]} /></div>
           </Specimen>
         </SpecimenGroup>
 
         {/* PRODUCTS */}
-        <SpecimenGroup id="products" eyebrow="Pages · 10" title="Products">
+        <SpecimenGroup id="products" eyebrow="Pages · 09" title="Products">
           <p className="-mt-4 max-w-2xl text-sm text-text-muted-on-navy">Each product page is the same template themed by a per-product accent (NHF/REIF green, M-REIF/Commercial navy-vivid, Construction gold) flowing through dots, step borders, and the rate serif accent. Shown here with the NHF green accent.</p>
           <Specimen name="ProductHero" description="Centred status line + H1 + lede + stat bar + per-product viz." surface="none">
             <div className="w-full min-w-0"><ProductHero accent="#1A7A4A" viz="nhf" status={["NHF Mortgage", "CBN-regulated"]} heading={[{ text: "Own your first home on a " }, { text: "payslip", accent: true }, { text: "." }]} lede="The National Housing Fund route — fixed 6% over up to 30 years, for working Nigerians." stats={[{ num: "6.0%", lbl: "Fixed p.a." }, { num: "30 yrs", lbl: "Max tenure" }, { num: "₦15M", lbl: "Max NHF loan" }]} /></div>

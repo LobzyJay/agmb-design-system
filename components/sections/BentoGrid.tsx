@@ -22,10 +22,12 @@ export interface BentoTileProps {
   accent?: string;
   /** Viz aspect ratio (w:h) so the silhouette never stretches to the tile. */
   ar?: number;
+  /** Viz scale — fills more of the tile-viz area (default 1.3 in the tile). */
+  vizScale?: number;
   className?: string;
 }
 
-export const BentoTile: React.FC<BentoTileProps> = ({ category, name, copy, rate, link = "Learn more", href = "#", flagship, icon, viz, accent = "#1F4FA8", ar, className }) => (
+export const BentoTile: React.FC<BentoTileProps> = ({ category, name, copy, rate, link = "Learn more", href = "#", flagship, icon, viz, accent = "#1F4FA8", ar, vizScale = 1.55, className }) => (
   <a href={href} className={cn("tile", flagship && "tile--flagship", className)}>
     <div className="tile__content">
       <div className="tile__top">
@@ -41,7 +43,7 @@ export const BentoTile: React.FC<BentoTileProps> = ({ category, name, copy, rate
     </div>
     {viz && (
       <div className="tile-viz">
-        <TileViz viz={viz} accent={accent} ar={ar} />
+        <TileViz viz={viz} accent={accent} ar={ar} scale={vizScale} />
       </div>
     )}
   </a>

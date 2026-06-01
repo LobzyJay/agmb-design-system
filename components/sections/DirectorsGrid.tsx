@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { asset } from "@/lib/site-config";
 
 // AGMB DirectorCard / DirectorsGrid — uses the site's verbatim .directors__grid /
 // .director-card CSS. Two registers: board (dark section, gold border, cream text)
@@ -21,7 +22,7 @@ export const DirectorCard: React.FC<DirectorCardProps> = ({ name, role, bio, ini
   <article className="director-card">
     {photo ? (
       // eslint-disable-next-line @next/next/no-img-element
-      <img className="director-card__photo" src={photo} alt={name} />
+      <img className="director-card__photo" src={asset(photo)} alt={name} />
     ) : (
       <span className="director-card__portrait">
         <span className="director-card__initials">{initials ?? name.split(" ").map((w) => w[0]).slice(0, 2).join("")}</span>

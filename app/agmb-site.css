@@ -341,23 +341,10 @@
 .faq__cta-title { font: 500 28px/115% 'Inter', sans-serif; letter-spacing: -0.035em; color: var(--navy-deep); margin: 0; }
 .faq__cta-lede { font: 400 15px/162.5% 'Inter', sans-serif; color: rgba(6,26,46,0.7); margin: 0; }
 
-/* ───── INSIGHTS · paper palette ─────────────────────────────────────────── */
-:root {
-  --paper-cream: #FAF3E8; --paper-beige: #F2E8D5; --paper-peach: #F5DEC8;
-  --paper-mint: #E8F0E1; --paper-white: #F8F5EF; --paper-khaki: #EDE4CC;
-  --ink-dark: #1A1209; --ink-navy: #061A2E; --ink-mid: rgba(26,18,9,0.72); --ink-faint: rgba(26,18,9,0.50);
-}
-/* Doc grid of torn clippings (the site's ≤1024px register, edges kept). */
-.clippings-doc { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 28px; align-items: start; }
-.clipping { position: relative; background: var(--paper-cream); padding: 22px 24px 26px; box-shadow: 0 2px 4px rgba(0,0,0,0.14), 0 10px 28px -6px rgba(0,0,0,0.42), 0 24px 48px -16px rgba(0,0,0,0.28); transition: transform 0.42s cubic-bezier(0.34,1.26,0.64,1), box-shadow 0.42s ease; isolation: isolate; }
-.clipping::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.055; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 180px 180px; mix-blend-mode: multiply; z-index: 2; }
-.clipping:hover { transform: scale(1.03) rotate(0deg) !important; box-shadow: 0 2px 4px rgba(0,0,0,0.16), 0 16px 40px -8px rgba(0,0,0,0.55), 0 32px 64px -20px rgba(0,0,0,0.35); z-index: 5; }
-.clipping--a { background: var(--paper-peach); transform: rotate(-1.4deg); clip-path: polygon(0.5% 0%, 22.5% 0%, 48% 0.3%, 78% 0%, 99.5% 0%, 100% 0.5%, 100% 33.5%, 99.6% 75.5%, 100% 99.5%, 79.5% 100%, 51% 100%, 21.5% 100%, 0.5% 100%, 0% 99.4%, 0.4% 65%, 0% 30%, 0.5% 0%); }
-.clipping--b { background: var(--paper-white); transform: rotate(1.2deg); clip-path: polygon(0.6% 0%, 32% 0%, 66.5% 0.2%, 99.4% 0%, 100% 0.6%, 100% 37.5%, 99.7% 79.5%, 100% 99.4%, 67% 99.7%, 35% 100%, 0.6% 99.4%, 0% 99%, 0.3% 51%, 0% 15%, 0.6% 0%); }
-.clipping--c { background: var(--paper-mint); transform: rotate(0.8deg); clip-path: polygon(0.6% 0%, 30% 0.3%, 67.5% 0%, 99.4% 0.2%, 100% 0.6%, 100% 54.5%, 99.6% 97%, 100% 99.4%, 65% 99.7%, 25% 100%, 0.6% 100%, 0% 99.4%, 0.4% 47.5%, 0% 8.5%, 0.6% 0%); }
-.clipping--d { background: var(--paper-khaki); transform: rotate(-1.8deg); clip-path: polygon(0.5% 0%, 32% 0%, 73.5% 0%, 99.5% 0%, 100% 0.5%, 100% 49%, 99.6% 94%, 99% 100%, 62.5% 100%, 18% 100%, 0.5% 99.5%, 0% 99%, 0.4% 55.5%, 0% 11.5%, 0.5% 0%); }
-.clipping--e { background: var(--paper-beige); transform: rotate(0.6deg); clip-path: polygon(0.6% 0%, 37.5% 0%, 75% 0.2%, 99.4% 0%, 100% 0.6%, 100% 54%, 99.6% 99.4%, 99.4% 100%, 57% 100%, 10.5% 100%, 0% 99.4%, 0.4% 50%, 0% 8%, 0.6% 0%); }
-.clipping--f { background: var(--paper-cream); transform: rotate(-1.1deg); clip-path: polygon(0.5% 0%, 40% 0%, 80% 0%, 100% 0.5%, 100% 50%, 99.6% 99%, 60% 100%, 12% 100%, 0% 99%, 0.4% 50%, 0.5% 0%); }
-.clipping__source { font: 600 10px/1 'Inter', sans-serif; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; border-bottom: 1px solid rgba(26,18,9,0.12); padding-bottom: 8px; position: relative; z-index: 3; }
-.clipping__headline { font: 400 16px/130% 'Libre Baskerville', serif; color: var(--ink-dark); margin: 0 0 8px; letter-spacing: -0.01em; position: relative; z-index: 3; }
-.clipping__dek { font: 400 11px/162% 'Inter', sans-serif; color: var(--ink-mid); margin: 0; position: relative; z-index: 3; }
+
+/* ───── Bento doc tuning — compact tiles + larger viz (kill whitespace) ───── */
+.tile--flagship { min-height: 420px; }
+.tile__content { min-height: 0; }
+.tile--flagship .tile__content { min-height: 0; }
+.tile-viz { min-height: 180px; flex: 0 0 52%; }
+.tile--flagship .tile-viz { min-height: 340px; }

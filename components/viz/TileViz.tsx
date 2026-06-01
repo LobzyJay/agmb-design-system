@@ -26,10 +26,13 @@ export interface TileVizProps {
   /** Aspect ratio (w:h) the silhouette is drawn at, so it never stretches to
    *  the container. Skylines suit wider (≈2.6), houses ≈1.6. */
   ar?: number;
+  /** Scale the silhouette within its container (1 = fit; >1 fills more / less
+   *  whitespace, e.g. 1.3 in bento tiles). */
+  scale?: number;
   className?: string;
 }
 
-export const TileViz: React.FC<TileVizProps> = ({ viz, accent = "#22C55E", ar = 1.7, className }) => {
+export const TileViz: React.FC<TileVizProps> = ({ viz, accent = "#22C55E", ar = 1.7, scale = 1, className }) => {
   const hostRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
@@ -68,6 +71,7 @@ export const TileViz: React.FC<TileVizProps> = ({ viz, accent = "#22C55E", ar = 
       let bw = off.width;
       let bh = bw / ar;
       if (bh > off.height) { bh = off.height; bw = bh * ar; }
+      bw *= scale; bh *= scale;
       const ox = (off.width - bw) / 2;
       const oy = off.height - bh;
       octx.save();
@@ -140,7 +144,7 @@ export const TileViz: React.FC<TileVizProps> = ({ viz, accent = "#22C55E", ar = 
       host.removeEventListener("mousemove", onMove);
       host.removeEventListener("mouseleave", onLeave);
     };
-  }, [viz, accent]);
+  }, [viz, accent, ar, scale]);
 
   return (
     <div ref={hostRef} className={cn("relative h-full w-full", className)}>

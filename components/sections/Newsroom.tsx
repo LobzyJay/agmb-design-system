@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { asset } from "@/lib/site-config";
 
 // AGMB Newsroom — uses the site's verbatim .news__row / .featured / .story CSS.
 
@@ -27,7 +28,7 @@ export const Newsroom: React.FC<NewsroomProps> = ({ featured, stories, className
       <a
         href={featured.href ?? "#"}
         className="featured__tile"
-        style={featured.image ? { backgroundImage: `linear-gradient(180deg, rgba(6,26,46,0.2), rgba(6,26,46,0.92)), url(${featured.image})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+        style={featured.image ? { backgroundImage: `linear-gradient(180deg, rgba(6,26,46,0.2), rgba(6,26,46,0.92)), url(${asset(featured.image)})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
       >
         {featured.chip && <span className="featured__chip">{featured.chip}</span>}
         {featured.date && <span className="featured__date">{featured.date}</span>}
