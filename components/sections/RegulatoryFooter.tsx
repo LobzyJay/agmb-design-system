@@ -20,7 +20,7 @@ export const RegulatoryFooter: React.FC<RegulatoryFooterProps> = ({ tagline, col
   <div className={cn("footer__panel", className)}>
     <div className="footer__top">
       <div className="footer__brand">
-        <Logo variant="wordmark-coloured" height={40} />
+        <Logo variant="wordmark-white" height={40} />
         {tagline && <p className="footer__tag">{tagline}</p>}
       </div>
       <div className="footer__cols">

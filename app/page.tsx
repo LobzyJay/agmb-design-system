@@ -193,14 +193,14 @@ export default function DesignSystem() {
             <SegmentedControl aria-label="Scenario" options={[{ value: "nhf", label: "NHF" }, { value: "mreif", label: "M-REIF" }, { value: "commercial", label: "Commercial" }]} />
           </Specimen>
           <Specimen name="Slider · MoneyInput · PercentInput" surface="cream">
-            <div className="flex w-full max-w-md flex-col gap-6">
-              <Slider label="Property value" display="₦116,500,000" value={116500000} min={15000000} max={300000000} step={500000} />
+            <div className="grid w-full gap-6 sm:grid-cols-2">
+              <div className="sm:col-span-2"><Slider label="Property value" display="₦116,500,000" value={116500000} min={15000000} max={300000000} step={500000} /></div>
               <FormField label="Loan amount" surface="cream"><MoneyInput value={92800000} /></FormField>
               <FormField label="Down payment" surface="cream"><PercentInput value={20} /></FormField>
             </div>
           </Specimen>
           <Specimen name="RatioBar" description="Principal vs interest split." surface="navy">
-            <div className="w-full max-w-md"><RatioBar value={0.62} /></div>
+            <div className="w-full"><RatioBar value={0.62} /></div>
           </Specimen>
         </SpecimenGroup>
 
@@ -256,8 +256,8 @@ export default function DesignSystem() {
           <Specimen name="FactStrip" description="The cream pill of facts that leaks over the hero viz." surface="black">
             <div className="w-full"><FactStrip facts={[{ label: "Years", value: "20+", caption: "CBN-regulated", dot: "gold" }, { label: "Disbursed", value: "₦2.8B", caption: "last 12 months", dot: "green" }, { label: "Families", value: "97", caption: "homes financed", dot: "navy" }]} /></div>
           </Specimen>
-          <Specimen name="StatsRow" description="Cream stats band — 80px Inter Tight numerics." surface="cream">
-            <div className="w-full"><StatsRow eyebrow="By the numbers" heading="Two decades of careful lending." stats={[{ eyebrow: "Years regulated", value: "20+", caption: "CBN since 2004" }, { eyebrow: "Disbursed", value: "₦2.8B", caption: "last 12 months" }, { eyebrow: "Families", value: "97", caption: "homes financed" }, { eyebrow: "Certified", value: "ISO 9001", caption: "quality management" }]} /></div>
+          <Specimen name="StatsRow" description="Cream stats band — Inter Tight numerics." surface="cream">
+            <div className="w-full"><StatsRow eyebrow="By the numbers" heading="Two decades of careful lending." stats={[{ eyebrow: "Years regulated", value: "20+", caption: "CBN since 2004" }, { eyebrow: "Disbursed", value: "₦2.8B", caption: "last 12 months" }, { eyebrow: "Families", value: "97", caption: "homes financed" }, { eyebrow: "Certified", value: "ISO", caption: "9001:2015 certified" }]} /></div>
           </Specimen>
           <Specimen name="RegulatoryFooter" description="The site footer — navy panel, brand + columns, regulatory disclosures." surface="none">
             <div className="w-full"><RegulatoryFooter tagline="AG Mortgage Bank Plc — a CBN-licensed Primary Mortgage Bank, established 2004." columns={[{ title: "Products", links: [{ label: "NHF Mortgage", href: "#" }, { label: "M-REIF", href: "#" }, { label: "Commercial", href: "#" }] }, { title: "Company", links: [{ label: "About", href: "#" }, { label: "Insights", href: "#" }, { label: "Contact", href: "#" }] }, { title: "Legal", links: [{ label: "Privacy", href: "#" }, { label: "Terms", href: "#" }, { label: "Disclosures", href: "#" }] }]} disclosures={[{ label: "CBN-licensed PMI", href: "#" }, { label: "NDIC-insured", href: "#" }, { label: "ISO 9001:2015", href: "#" }, { label: "RC 123456", href: "#" }]} /></div>
