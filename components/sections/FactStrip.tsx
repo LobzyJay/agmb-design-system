@@ -1,29 +1,35 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { Fact, type FactProps } from "@/components/Fact";
-import { Hairline } from "@/components/Hairline";
 
-// AGMB FactStrip — the cream pill of facts that overlays the bottom of the hero
-// ("leaking" up over the viz). Hairline dividers between facts.
+// AGMB FactStrip — uses the site's verbatim .fact-strip / .fact CSS.
+
+export interface FactItem {
+  label: React.ReactNode;
+  value: React.ReactNode;
+  caption?: React.ReactNode;
+  dot?: "gold" | "green" | "navy";
+}
+
+const DOT: Record<string, string> = { gold: "#F0C441", green: "#22C55E", navy: "#1F4FA8" };
 
 export interface FactStripProps {
-  facts: Omit<FactProps, "surface">[];
-  leaking?: boolean;
+  facts: FactItem[];
   className?: string;
 }
 
-export const FactStrip: React.FC<FactStripProps> = ({ facts, leaking, className }) => (
-  <div
-    className={cn(
-      "mx-auto flex max-w-[1100px] items-stretch gap-8 rounded-xl bg-cream-warm px-8 py-7 md:px-12 md:py-8",
-      leaking && "relative z-[1] -mt-16 md:-mt-24",
-      className,
-    )}
-  >
+export const FactStrip: React.FC<FactStripProps> = ({ facts, className }) => (
+  <div className={cn("fact-strip", className)}>
     {facts.map((f, i) => (
       <React.Fragment key={i}>
-        {i > 0 && <Hairline surface="cream" orientation="vertical" />}
-        <Fact {...f} surface="cream" className="flex-1" />
+        {i > 0 && <span className="divider" />}
+        <div className="fact">
+          <span className="fact__eyebrow">
+            <span style={{ background: DOT[f.dot ?? "gold"] }} />
+            <span>{f.label}</span>
+          </span>
+          <span className="fact__numeric">{f.value}</span>
+          {f.caption && <span className="fact__caption">{f.caption}</span>}
+        </div>
       </React.Fragment>
     ))}
   </div>

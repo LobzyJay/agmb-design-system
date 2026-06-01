@@ -2,8 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { StatusLine } from "@/components/StatusLine";
 import { Button } from "@/components/Button";
-import { FactStrip } from "@/components/sections/FactStrip";
-import type { FactProps } from "@/components/Fact";
+import { FactStrip, type FactItem } from "@/components/sections/FactStrip";
 
 // AGMB Hero — the centred opening: status line, an Inter H1 with a green serif-italic
 // accent word, lede, dual CTAs, a viz panel, and the leaking fact strip.
@@ -16,7 +15,7 @@ export interface HeroProps {
   lede: React.ReactNode;
   primary?: { label: string; href: string };
   secondary?: { label: string; href: string };
-  facts: Omit<FactProps, "surface">[];
+  facts: FactItem[];
   className?: string;
 }
 
@@ -49,7 +48,7 @@ export const Hero: React.FC<HeroProps> = ({ status, heading, lede, primary, seco
     </div>
 
     <div className="px-6 pb-10 md:px-10">
-      <FactStrip facts={facts} leaking />
+      <div className="relative z-[1] -mt-16 md:-mt-24"><FactStrip facts={facts} /></div>
     </div>
   </section>
 );

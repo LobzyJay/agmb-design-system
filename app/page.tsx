@@ -233,8 +233,8 @@ export default function DesignSystem() {
               />
             </div>
           </Specimen>
-          <Specimen name="CalculatorPanel" description="Twin-panel calculator — segmented scenario + sliders → navy output." surface="none">
-            <div className="w-full"><CalculatorPanel className="!bg-transparent !px-0 !py-0" /></div>
+          <Specimen name="CalculatorPanel" description="Twin-panel calculator (site CSS) — segmented route + sliders → navy output, real reducing-balance math + cap notice." surface="none">
+            <div className="w-full"><CalculatorPanel /></div>
           </Specimen>
           <Specimen name="CommunityTabs" surface="none">
             <div className="w-full"><CommunityTabs className="!px-0 !py-0" tabs={[{ num: "01", label: "First-time buyers", art: { eyebrow: "NHF", statAccent: "97", stat: "families", caption: "financed in the last year" }, body: <p>Built for working Nigerians on a payslip.</p> }, { num: "02", label: "Self-employed", art: { eyebrow: "M-REIF", statAccent: "₦2.8B", stat: "disbursed", caption: "in 12 months" }, body: <p>Underwritten on cash flow.</p> }]} /></div>
@@ -243,7 +243,7 @@ export default function DesignSystem() {
             <div className="w-full"><Newsroom className="!bg-transparent !px-0 !py-0" featured={{ chip: "Disclosure", meta: "12 May 2026", title: "AGMB posts ₦2.8B in mortgage origination", href: "#" }} stories={[{ meta: "Press · 02 May", title: "M-REIF window reopens for Q2", href: "#" }, { meta: "Insight · 24 Apr", title: "What the new NHF cap means", href: "#" }]} /></div>
           </Specimen>
           <Specimen name="AdvisoryBand" surface="none">
-            <div className="w-full"><AdvisoryBand className="!bg-transparent !px-0 !py-0" eyebrow="Advisory" title="Talk to a mortgage advisor" copy="Free, no obligation." cta={{ label: "Book a call", href: "#" }} stat={{ accent: "3", value: "advisors", sub: "on call right now" }} /></div>
+            <div className="w-full"><AdvisoryBand eyebrow="Advisory" title="Talk to a mortgage advisor" copy="Free, no obligation. Real people who close Nigerian mortgages every week." cta={{ label: "Book a call", href: "#" }} stat={{ accent: "3", value: "advisors", sub: "on call right now, Mon–Sat" }} /></div>
           </Specimen>
         </SpecimenGroup>
 
