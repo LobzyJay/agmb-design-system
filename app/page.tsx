@@ -226,7 +226,7 @@ export default function DesignSystem() {
               <SiteNav scrolled links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
             </div>
           </Specimen>
-          <Specimen name="Hero" description="The centred opening — status row, Inter H1 with a serif-italic accent word, lede, dual CTAs, over the particle-building viz." surface="none">
+          <Specimen name="Hero" description="The centred opening — status row, Inter H1 with an upright serif accent word, lede, dual CTAs, above the particle-building viz band." surface="none">
             <div className="w-full">
               <Hero
                 status={["CBN-licensed since 2004", "NDIC-insured"]}

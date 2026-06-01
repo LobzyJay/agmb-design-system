@@ -20,7 +20,6 @@ export interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ status, heading, lede, primary, secondary, vizImage = "/images/agmb-particle-building.png", className }) => (
   <section className={cn("hero-doc", className)}>
-    <span className="hero-doc__viz" aria-hidden style={{ backgroundImage: `url(${asset(vizImage)})` }} />
     <span className="status-row">
       <span className="pulse" aria-hidden />
       {status.map((s, i) => (
@@ -40,5 +39,6 @@ export const Hero: React.FC<HeroProps> = ({ status, heading, lede, primary, seco
       {primary && <a className="cta cta--primary" href={primary.href}>{primary.label}</a>}
       {secondary && <a className="cta cta--secondary" href={secondary.href}>{secondary.label}</a>}
     </div>
+    <div className="hero-doc__band" aria-hidden style={{ backgroundImage: `url(${asset(vizImage)})` }} />
   </section>
 );

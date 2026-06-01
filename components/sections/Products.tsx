@@ -20,7 +20,6 @@ export interface ProductHeroProps {
 }
 export const ProductHero: React.FC<ProductHeroProps> = ({ status, heading, lede, stats, viz, accent, className }) => (
   <section className={cn("prod hero-doc", className)} style={accentStyle(accent)}>
-    {viz && <span className="hero-doc__viz" aria-hidden style={{ backgroundImage: "none" }} />}
     <span className="status-row">
       <span className="pulse" aria-hidden />
       {status.map((s, i) => (<React.Fragment key={i}>{i > 0 && <span className="dot">/</span>}<span>{s}</span></React.Fragment>))}

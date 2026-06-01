@@ -30,6 +30,8 @@
   --color-green-deep: #14613A;
   --color-green-vivid:#22C55E;
   --color-black:      #000000;   /* the site's page-wrapper backdrop */
+  --color-graphite:   #16191F;   /* doc-page backdrop — softer than pure black */
+  --color-graphite-2: #1C2027;   /* lifted graphite panel for neutral specimens */
 
   /* Insights page paper/ink extension */
   --color-paper-white:#F8F5EF;
@@ -71,7 +73,7 @@
 /* ── TIER 2 · SEMANTIC (runtime-resolvable) ───────────────────────────────── */
 @theme inline {
   /* Surfaces */
-  --color-surface-page:   var(--color-black);       /* page backdrop (the site's #000) */
+  --color-surface-page:   var(--color-graphite);    /* doc-page backdrop — graphite, softer than #000 */
   --color-surface-navy:   var(--color-navy-deep);   /* primary dark section */
   --color-surface-navy-2: var(--color-navy);        /* lifted dark card */
   --color-surface-cream:  var(--color-cream-warm);  /* primary light section */
@@ -163,10 +165,12 @@ body {
 .caption {
   font: 400 12px/137.5% var(--font-sans);
 }
-/* Serif italic accent word inside a heading (the site's only serif use) */
+/* Serif accent word inside a heading — upright Libre Baskerville (the site's only serif use) */
 .serif-accent {
   font-family: var(--font-serif);
-  font-style: italic;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: -0.045em;
   color: var(--color-positive);
 }
 
