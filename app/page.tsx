@@ -111,7 +111,7 @@ export default function DesignSystem() {
       </aside>
 
       {/* Content */}
-      <main className="flex min-w-0 flex-col gap-24 overflow-x-clip px-6 py-20 md:px-12 lg:px-16">
+      <main className="mx-auto flex w-full min-w-0 max-w-[1240px] flex-col gap-24 overflow-x-clip px-6 py-20 md:px-12 lg:px-16">
         <header id="foundations" className="scroll-mt-24 flex max-w-3xl flex-col gap-5">
           <Eyebrow dot="gold" className="text-gold-vivid">AGMB · Design System</Eyebrow>
           <h1 className="h1 text-cream-warm">
@@ -233,9 +233,13 @@ export default function DesignSystem() {
         {/* PATTERNS */}
         <SpecimenGroup id="patterns" eyebrow="Catalogue · 07" title="Patterns">
           <Specimen name="SiteNav" description="The site header — transparent over the hero, condensing into a floating glass pill on scroll. Both states shown." surface="black">
-            <div className="flex w-full flex-col gap-4">
-              <SiteNav links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
-              <SiteNav scrolled links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
+            <div className="flex w-full flex-col gap-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="min-w-[560px]">
+                <SiteNav links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
+              </div>
+              <div className="min-w-[560px]">
+                <SiteNav scrolled links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
+              </div>
             </div>
           </Specimen>
           <Specimen name="Hero" description="The centred opening — status row, Inter H1 with an upright serif accent word, lede, dual CTAs, above the particle-building viz band." surface="none">

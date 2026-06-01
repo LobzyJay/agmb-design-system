@@ -123,11 +123,19 @@
 .calc-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--cream-warm); border: 2px solid var(--navy-deep); cursor: pointer; box-shadow: 0 2px 8px -2px rgba(6,26,46,0.25); }
 .calc-slider:focus-visible { outline: 2px solid var(--green-vivid); outline-offset: 4px; }
 
-@media (max-width: 767px) {
-  .twin { flex-direction: column; }
+/* Stack the wide two-column specimens once the doc content column gets tight.
+   The sidebar appears at lg (1024px) but eats ~288px, so the content column
+   stays narrow until ~xl. The calculator/contact twins carry large numerics and
+   need the most width, so they stack until 1440; the bento stacks until 1280. */
+@media (max-width: 1439px) {
+  .twin, .contact-twin { flex-direction: column; }
+}
+@media (max-width: 1279px) {
   .bento__top, .bento__bot { flex-direction: column; }
-  .tile, .tile--flagship { flex-direction: column; display: flex; min-height: 0; padding: 28px; }
-  .tile--flagship .tile-viz, .tile-viz { min-height: 0; width: 100%; aspect-ratio: 5 / 2; }
+}
+@media (max-width: 767px) {
+  .tile, .tile--flagship { padding: 28px; }
+  .fact-strip { flex-wrap: wrap; gap: 24px 32px; }
   .advisory { flex-direction: column; align-items: flex-start; gap: 24px; }
 }
 
