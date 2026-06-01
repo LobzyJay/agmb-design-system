@@ -1,18 +1,181 @@
 @import "tailwindcss";
 
-/* Tailwind v4 content scan — lock to source dirs (avoids compiling prose in
-   .md files as classes → broken CSS / 500s). */
+/* Tailwind v4 content scan — lock to source dirs so prose in .md files is never
+   compiled as classes (avoids broken CSS / 500s). */
 @source "./app/**/*.{ts,tsx,js,jsx}";
 @source "./components/**/*.{ts,tsx,js,jsx}";
 
-/* Phase 1 stub — full 3-tier token system lands in Phase 2. */
-:root {
+/* ============================================================================
+   AGMB tokens — derived 1:1 from the live site (agmb-website).
+   THREE TIERS:
+     1. RAW (@theme)         — the literal values the site ships. Only place hex lives.
+     2. SEMANTIC (@theme inline) — role names → raw; utilities reference the var so a
+                                   surface scope can reassign them at runtime.
+     3. COMPONENT (:root vars)   — fixed compositions (shadows, blur, z-index).
+   ============================================================================ */
+
+/* ── TIER 1 · RAW ─────────────────────────────────────────────────────────── */
+@theme {
+  /* Brand palette — verbatim from the home :root block */
   --color-navy-deep: #061A2E;
+  --color-navy:      #0A2540;
+  --color-navy-vivid:#1F4FA8;
+  --color-navy-soft: #0F2F50;
+  --color-cream:      #F8F5EF;
   --color-cream-warm: #FAF3E8;
+  --color-cream-vivid:#FFEFC2;
+  --color-cream-deep: #EDE5D5;
+  --color-gold-rich:  #E0B040;
+  --color-gold-vivid: #F0C441;
+  --color-green-deep: #14613A;
+  --color-green-vivid:#22C55E;
+  --color-black:      #000000;   /* the site's page-wrapper backdrop */
+
+  /* Insights page paper/ink extension */
+  --color-paper-white:#F8F5EF;
+  --color-paper-cream:#FAF3E8;
+  --color-paper-beige:#F2E8D5;
+  --color-paper-khaki:#EDE4CC;
+  --color-paper-mint: #E8F0E1;
+  --color-paper-peach:#F5DEC8;
+  --color-ink-dark:   #1A1209;
+  --color-ink-navy:   #061A2E;
+
+  /* Radii ladder — the distinct border-radius values used across the site */
+  --radius-xs:  4px;
+  --radius-sm:  12px;
+  --radius-md:  14px;
+  --radius-lg:  18px;
+  --radius-xl:  24px;
+  --radius-2xl: 28px;
+  --radius-3xl: 32px;
+  --radius-4xl: 36px;
+  --radius-pill:999px;
+
+  /* Motion — easings + durations measured from the site */
+  --ease-expo:     cubic-bezier(0.16, 1, 0.3, 1);     /* primary reveal/transition */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);      /* segmented indicator, generic */
+  --ease-drawer:   cubic-bezier(0.22, 1, 0.36, 1);    /* mobile drawer / hamburger */
+  --ease-overshoot:cubic-bezier(0.34, 1.56, 0.64, 1); /* tile lift, number pulse */
+  --duration-fast:   180ms;
+  --duration-base:   280ms;
+  --duration-drawer: 320ms;
+  --duration-reveal: 700ms;
+
+  /* Type stack — the three faces the site loads (next/font vars in layout.tsx) */
+  --font-sans:    var(--font-inter), system-ui, sans-serif;
+  --font-numeric: var(--font-inter-tight), system-ui, sans-serif;
+  --font-serif:   var(--font-libre), Georgia, serif;
 }
 
-html,
+/* ── TIER 2 · SEMANTIC (runtime-resolvable) ───────────────────────────────── */
+@theme inline {
+  /* Surfaces */
+  --color-surface-page:   var(--color-black);       /* page backdrop (the site's #000) */
+  --color-surface-navy:   var(--color-navy-deep);   /* primary dark section */
+  --color-surface-navy-2: var(--color-navy);        /* lifted dark card */
+  --color-surface-cream:  var(--color-cream-warm);  /* primary light section */
+  --color-surface-cream-2:var(--color-cream);       /* alt light */
+
+  /* Text */
+  --color-text-on-navy:        var(--color-cream-warm);
+  --color-text-on-cream:       var(--color-navy-deep);
+  --color-text-muted-on-navy:  rgba(250, 243, 232, 0.70);
+  --color-text-muted-on-cream: rgba(6, 26, 46, 0.70);
+  --color-text-faint-on-navy:  rgba(250, 243, 232, 0.40);
+  --color-text-faint-on-cream: rgba(6, 26, 46, 0.45);
+
+  /* Accents */
+  --color-accent:      var(--color-gold-vivid);  /* dots, hairline accents, scroll thread */
+  --color-accent-warm: var(--color-gold-rich);
+  --color-positive:    var(--color-green-vivid); /* status pulse, calc fills, serif stat */
+  --color-positive-deep:var(--color-green-deep);
+
+  /* CTA — primary is the cream pill; gold is NEVER a fill */
+  --color-cta-fill:           var(--color-cream-warm);
+  --color-cta-text:           var(--color-navy-deep);
+  --color-cta-secondary-fill: var(--color-navy-vivid);
+  --color-cta-secondary-text: var(--color-cream-warm);
+
+  /* Hairlines */
+  --color-hairline-on-navy:  rgba(250, 243, 232, 0.10);
+  --color-hairline-on-cream: rgba(6, 26, 46, 0.08);
+}
+
+/* ── TIER 3 · COMPONENT (fixed compositions) ──────────────────────────────── */
+:root {
+  --shadow-button-rest:  0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 1px 2px rgba(0, 0, 0, 0.18);
+  --shadow-button-hover: 0 8px 24px -10px rgba(0, 0, 0, 0.50), 0 2px 6px -2px rgba(0, 0, 0, 0.25);
+  --shadow-tile-hover:   0 16px 40px -12px rgba(0, 0, 0, 0.35);
+  --shadow-nav-glass:    0 8px 32px -8px rgba(0, 0, 0, 0.55);
+  --blur-nav-glass:      blur(24px) saturate(160%);
+
+  --z-nav: 50;
+  --z-drawer: 55;
+  --z-hamburger: 70;
+  --z-scroll-progress: 200;
+  --z-loader: 9999;
+}
+
+/* ============================================================================
+   Base + type helpers — mirror the site's .h1/.h2/.lede/.eyebrow/.numeric/.caption
+   so components and pages match it exactly.
+   ============================================================================ */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
+}
 body {
-  background: var(--color-navy-deep);
-  color: var(--color-cream-warm);
+  margin: 0;
+  background: var(--color-surface-page);
+  color: var(--color-text-on-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.h1 {
+  font: 500 72px/104% var(--font-sans);
+  font-size: clamp(40px, 4.2vw + 1rem, 72px);
+  letter-spacing: -0.065em;
+  margin: 0;
+}
+.h2 {
+  font: 500 48px/105% var(--font-sans);
+  font-size: clamp(28px, 2.6vw + 0.5rem, 48px);
+  letter-spacing: -0.06em;
+  margin: 0;
+}
+.lede {
+  font: 400 18px/162.5% var(--font-sans);
+  font-size: clamp(15px, 0.6vw + 0.7rem, 18px);
+}
+.eyebrow {
+  font: 600 11px/150% var(--font-sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.numeric {
+  font: 500 30px/120% var(--font-numeric);
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+}
+.caption {
+  font: 400 12px/137.5% var(--font-sans);
+}
+/* Serif italic accent word inside a heading (the site's only serif use) */
+.serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--color-positive);
+}
+
+/* Motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
