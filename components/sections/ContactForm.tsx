@@ -1,12 +1,9 @@
+"use client";
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { FormField } from "@/components/FormField";
-import { Button } from "@/components/Button";
 
-// AGMB ContactForm — the contact .contact-twin: an info panel (eyebrow, heading
-// with serif accent, contact rows) beside a form panel.
-
-const inputCls = "w-full rounded-sm border border-navy-deep/12 bg-white px-4 py-3 text-base text-navy-deep outline-none focus:border-navy-vivid";
+// AGMB ContactForm — uses the site's verbatim .contact-twin CSS: a cream info
+// panel (eyebrow, heading, copy, contact rows) beside a lighter-cream form panel.
 
 export interface ContactRow {
   label: string;
@@ -23,34 +20,46 @@ export interface ContactFormProps {
 }
 
 export const ContactForm: React.FC<ContactFormProps> = ({ eyebrow, heading, copy, rows, className }) => (
-  <div className={cn("grid grid-cols-1 overflow-hidden rounded-3xl lg:grid-cols-2", className)}>
-    {/* Info panel — navy */}
-    <div className="flex flex-col gap-6 bg-navy-deep p-10 text-cream-warm md:p-12">
-      {eyebrow && <span className="eyebrow text-gold-vivid">{eyebrow}</span>}
-      <h3 className="text-3xl font-medium leading-[1.1] tracking-[-0.04em]">{heading}</h3>
-      {copy && <p className="text-sm leading-relaxed text-text-muted-on-navy">{copy}</p>}
-      <dl className="mt-2 flex flex-col gap-5">
-        {rows.map((r) => (
-          <div key={r.label} className="flex flex-col gap-1 border-t border-cream-warm/10 pt-4">
-            <dt className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-faint-on-navy">{r.label}</dt>
-            <dd className="text-base text-cream-warm">{r.value}</dd>
-            {r.sub && <dd className="text-xs text-text-muted-on-navy">{r.sub}</dd>}
+  <div className={cn("contact-twin", className)}>
+    {/* Info panel */}
+    <div className="contact-twin__panel">
+      {eyebrow && <span className="contact-eyebrow">{eyebrow}</span>}
+      <h3>{heading}</h3>
+      {copy && <p className="contact-copy">{copy}</p>}
+      <div className="contact-rows">
+        {rows.map((r, i) => (
+          <div key={i} className="contact-row">
+            <span className="contact-row__lbl">{r.label}</span>
+            <span className="contact-row__val">{r.value}</span>
+            {r.sub && <span className="contact-row__sub">{r.sub}</span>}
           </div>
         ))}
-      </dl>
+      </div>
     </div>
 
-    {/* Form panel — cream */}
-    <div className="flex flex-col gap-5 bg-cream-warm p-10 md:p-12">
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <FormField label="First name" surface="cream"><input className={inputCls} placeholder="Adaeze" /></FormField>
-        <FormField label="Last name" surface="cream"><input className={inputCls} placeholder="Okafor" /></FormField>
-      </div>
-      <FormField label="Email" surface="cream"><input type="email" className={inputCls} placeholder="you@email.com" /></FormField>
-      <FormField label="How can we help?" surface="cream">
-        <textarea rows={4} className={cn(inputCls, "resize-none")} placeholder="Tell us about the property and your situation…" />
-      </FormField>
-      <Button variant="secondary" className="self-start">Send message</Button>
+    {/* Form panel */}
+    <div className="contact-twin__panel contact-twin__panel--form">
+      <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
+        <div className="field-group">
+          <label className="field-label" htmlFor="cf-subject">Subject</label>
+          <input className="field-input" id="cf-subject" type="text" placeholder="One-line summary" />
+        </div>
+        <div className="contact-form-row">
+          <div className="field-group">
+            <label className="field-label" htmlFor="cf-name">Name</label>
+            <input className="field-input" id="cf-name" type="text" placeholder="First and last" />
+          </div>
+          <div className="field-group">
+            <label className="field-label" htmlFor="cf-email">Email</label>
+            <input className="field-input" id="cf-email" type="email" placeholder="you@example.com" />
+          </div>
+        </div>
+        <div className="field-group">
+          <label className="field-label" htmlFor="cf-msg">How can we help?</label>
+          <textarea className="field-textarea" id="cf-msg" placeholder="Tell us about the property and your situation…" />
+        </div>
+        <button type="submit" className="cta cta--secondary" style={{ alignSelf: "flex-start" }}>Send message</button>
+      </form>
     </div>
   </div>
 );

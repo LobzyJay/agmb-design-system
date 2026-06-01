@@ -200,3 +200,41 @@
 .partners__logo:hover img { opacity: 1; }
 @keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .partners__track { animation: none; } }
+
+/* ───── FORMS (verbatim) ─────────────────────────────────────────────────── */
+.form-shell { background: var(--cream-warm); border-radius: 32px; padding: clamp(32px, 4vw, 56px); color: var(--navy-deep); width: 100%; display: flex; flex-direction: column; }
+.progress { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 48px; }
+.progress__item { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border: 1px solid rgba(6,26,46,0.12); border-radius: 999px; font: 500 13px/1 'Inter', sans-serif; letter-spacing: -0.005em; color: rgba(6,26,46,0.45); background: transparent; user-select: none; }
+.progress__item.progress--active { background: var(--navy-deep); color: var(--cream-warm); border-color: var(--navy-deep); }
+.progress__item.progress--done { background: var(--green-deep); color: var(--cream-warm); border-color: var(--green-deep); }
+.field-group { display: flex; flex-direction: column; gap: 8px; }
+.field-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.field-label { font: 600 11px/1 'Inter', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(6,26,46,0.55); }
+.field-input, .field-textarea { padding: 14px 18px; background: rgba(6,26,46,0.04); border: 1.5px solid rgba(6,26,46,0.14); border-radius: 12px; font: 500 16px/1.4 'Inter', sans-serif; color: var(--navy-deep); width: 100%; transition: border-color 0.18s ease, background-color 0.18s ease; }
+.field-input::placeholder, .field-textarea::placeholder { color: rgba(6,26,46,0.35); }
+.field-input:focus, .field-textarea:focus { border-color: var(--green-vivid); background: #fff; outline: none; }
+.field-textarea { resize: vertical; min-height: 132px; line-height: 1.55; }
+.form-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+
+/* ───── CONTACT TWIN (verbatim; both cream) ──────────────────────────────── */
+.contact-twin { display: flex; border-radius: 32px; overflow: hidden; box-shadow: 0 24px 64px -24px rgba(0,0,0,0.6); flex-wrap: wrap; }
+.contact-twin__panel { flex: 1; min-width: 280px; padding: clamp(32px, 4vw, 64px) clamp(28px, 3.5vw, 56px); display: flex; flex-direction: column; gap: 28px; color: var(--navy-deep); background: var(--cream-warm); }
+.contact-twin__panel--form { background: var(--cream); border-left: 1px solid rgba(6,26,46,0.06); }
+.contact-twin__panel h3 { font: 500 40px/110% 'Inter', sans-serif; letter-spacing: -0.045em; color: var(--navy-deep); margin: 0; max-width: 480px; }
+.contact-eyebrow { font: 600 11px/1 'Inter', sans-serif; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-rich); display: inline-flex; align-items: center; gap: 10px; }
+.contact-eyebrow::before { content: ''; width: 4px; height: 4px; background: var(--gold-rich); display: inline-block; }
+.contact-copy { font: 400 15px/162.5% 'Inter', sans-serif; color: rgba(6,26,46,0.7); max-width: 440px; }
+.contact-rows { display: flex; flex-direction: column; gap: 24px; margin-top: 8px; padding-top: 28px; border-top: 1px solid rgba(6,26,46,0.10); }
+.contact-row { display: flex; flex-direction: column; gap: 4px; }
+.contact-row__lbl { font: 600 10px/1 'Inter', sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(6,26,46,0.55); }
+.contact-row__val { font: 500 17px/140% 'Inter', sans-serif; color: var(--navy-deep); letter-spacing: -0.01em; }
+.contact-row__sub { font: 400 13px/150% 'Inter Tight', sans-serif; color: rgba(6,26,46,0.55); font-variant-numeric: tabular-nums; }
+.contact-form { display: flex; flex-direction: column; gap: 18px; }
+.contact-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ───── CTA buttons (verbatim) ───────────────────────────────────────────── */
+.cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 18px 28px; border-radius: 14px; font: 500 16px/1 'Inter', sans-serif; letter-spacing: -0.005em; cursor: pointer; border: 0; text-decoration: none; transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease; }
+.cta:active { transform: scale(0.985); }
+.cta--primary { background: var(--cream-warm); color: var(--navy-deep); }
+.cta--secondary { background: var(--navy-vivid); color: var(--cream-warm); }
+.cta--ghost { background: transparent; color: inherit; }
