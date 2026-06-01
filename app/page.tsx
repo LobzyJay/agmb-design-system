@@ -98,7 +98,7 @@ export default function DesignSystem() {
 
       {/* Sidebar */}
       <aside className="hidden border-r border-cream-warm/10 lg:flex lg:flex-col lg:sticky lg:top-0 lg:h-screen lg:p-8">
-        <Logo variant="wordmark-white" height={30} />
+        <Logo variant="wordmark-white" height={30} className="self-start" />
         <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted-on-navy">Design System</p>
         <p className="mt-2 text-sm leading-relaxed text-text-muted-on-navy">Tokens, primitives and patterns — derived from the AG Mortgage Bank website.</p>
         <nav className="mt-8 flex flex-col gap-1">
