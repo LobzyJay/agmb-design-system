@@ -84,6 +84,18 @@ const EASES = [
 export default function DesignSystem() {
   return (
     <div className="min-h-screen bg-surface-page text-cream-warm lg:grid lg:grid-cols-[18rem_1fr]">
+      {/* Mobile top bar — logo + horizontally-scrollable section nav (sidebar is lg-only) */}
+      <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-cream-warm/10 bg-surface-page/90 px-5 py-3 backdrop-blur lg:hidden">
+        <Logo variant="wordmark-white" height={22} />
+        <nav className="ml-auto flex min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {NAV.map((n) => (
+            <a key={n.id} href={`#${n.id}`} className="whitespace-nowrap rounded-full px-3 py-1.5 text-xs text-text-muted-on-navy transition hover:bg-cream-warm/5 hover:text-cream-warm">
+              {n.label}
+            </a>
+          ))}
+        </nav>
+      </header>
+
       {/* Sidebar */}
       <aside className="hidden border-r border-cream-warm/10 lg:flex lg:flex-col lg:sticky lg:top-0 lg:h-screen lg:p-8">
         <Logo variant="wordmark-white" height={30} />
@@ -220,7 +232,7 @@ export default function DesignSystem() {
 
         {/* PATTERNS */}
         <SpecimenGroup id="patterns" eyebrow="Catalogue · 07" title="Patterns">
-          <Specimen name="SiteNav" description="The site header — transparent over the hero, condensing into a floating glass pill on scroll. Both states shown." surface="navy">
+          <Specimen name="SiteNav" description="The site header — transparent over the hero, condensing into a floating glass pill on scroll. Both states shown." surface="black">
             <div className="flex w-full flex-col gap-4">
               <SiteNav links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
               <SiteNav scrolled links={[{ label: "Mortgages", href: "#" }, { label: "Calculator", href: "#" }, { label: "About", href: "#" }, { label: "Insights", href: "#" }]} cta={{ label: "Apply now", href: "#" }} />
@@ -237,7 +249,7 @@ export default function DesignSystem() {
               />
             </div>
           </Specimen>
-          <Specimen name="FactStrip" description="The cream pill of facts that leaks over the hero viz." surface="navy">
+          <Specimen name="FactStrip" description="The cream pill of facts that leaks over the hero viz." surface="black">
             <div className="w-full"><FactStrip facts={[{ label: "Years", value: "20+", caption: "CBN-regulated", dot: "gold" }, { label: "Disbursed", value: "₦2.8B", caption: "last 12 months", dot: "green" }, { label: "Families", value: "97", caption: "homes financed", dot: "navy" }]} /></div>
           </Specimen>
           <Specimen name="StatsRow" description="Cream stats band — 80px Inter Tight numerics." surface="cream">
@@ -246,20 +258,20 @@ export default function DesignSystem() {
           <Specimen name="RegulatoryFooter" description="The site footer — navy panel, brand + columns, regulatory disclosures." surface="none">
             <div className="w-full"><RegulatoryFooter tagline="AG Mortgage Bank Plc — a CBN-licensed Primary Mortgage Bank, established 2004." columns={[{ title: "Products", links: [{ label: "NHF Mortgage", href: "#" }, { label: "M-REIF", href: "#" }, { label: "Commercial", href: "#" }] }, { title: "Company", links: [{ label: "About", href: "#" }, { label: "Insights", href: "#" }, { label: "Contact", href: "#" }] }, { title: "Legal", links: [{ label: "Privacy", href: "#" }, { label: "Terms", href: "#" }, { label: "Disclosures", href: "#" }] }]} disclosures={[{ label: "CBN-licensed PMI", href: "#" }, { label: "NDIC-insured", href: "#" }, { label: "ISO 9001:2015", href: "#" }, { label: "RC 123456", href: "#" }]} /></div>
           </Specimen>
-          <Specimen name="PartnersMarquee" description="Edge-masked logo marquee — the nine real partner logos, whitewashed, looping." surface="navy">
+          <Specimen name="PartnersMarquee" description="Edge-masked logo marquee — the nine real partner logos, whitewashed, looping." surface="black">
             <div className="w-full"><PartnersMarquee /></div>
           </Specimen>
           <Specimen name="Product bento" description="The site's product grid — cream tiles with the dithered viz on the right. Flagship + 2-stack on top, two tiles below. Hover a tile to lift it and displace the viz dots." surface="none">
             <div className="w-full">
               <BentoGrid
-                flagship={<BentoTile flagship viz="nhf" ar={1.5} vizScale={1.5} accent="#1A7A4A" category="Mortgage" name="NHF Mortgage" rate="6.0% p.a." copy="The National Housing Fund route for working Nigerians on a payslip — up to 30 years." link="Check NHF eligibility" />}
+                flagship={<BentoTile flagship viz="nhf" ar={1.7} vizScale={1.1} accent="#1A7A4A" category="Mortgage" name="NHF Mortgage" rate="6.0% p.a." copy="The National Housing Fund route for working Nigerians on a payslip — up to 30 years." link="Check NHF eligibility" />}
                 stack={[
-                  <BentoTile key="m" viz="mreif" ar={1.4} vizScale={1.9} accent="#1F4FA8" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed." />,
-                  <BentoTile key="c" viz="construction" ar={1.8} vizScale={1.9} accent="#E0B040" category="Build" name="Construction" rate="16%" copy="Stage-by-stage drawdowns." />,
+                  <BentoTile key="m" viz="mreif" ar={2.4} vizScale={1.0} accent="#1F4FA8" category="Refinance" name="M-REIF" rate="9.5%" copy="Refinance for the self-employed." />,
+                  <BentoTile key="c" viz="construction" ar={2.4} vizScale={1.0} accent="#E0B040" category="Build" name="Construction" rate="16%" copy="Stage-by-stage drawdowns." />,
                 ]}
                 bottom={[
-                  <BentoTile key="x" viz="commercial" ar={1.4} vizScale={1.9} accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use." />,
-                  <BentoTile key="r" viz="reif" ar={1.9} vizScale={1.8} accent="#1A7A4A" category="Invest" name="Real Estate" rate="14%" copy="Income-property finance." />,
+                  <BentoTile key="x" viz="commercial" ar={2.4} vizScale={1.0} accent="#1F4FA8" category="Commercial" name="Commercial" rate="18%" copy="Offices, retail and mixed-use." />,
+                  <BentoTile key="r" viz="reif" ar={2.6} vizScale={1.0} accent="#1A7A4A" category="Invest" name="Real Estate" rate="14%" copy="Income-property finance." />,
                 ]}
               />
             </div>
