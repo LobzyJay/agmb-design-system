@@ -25,6 +25,9 @@ import { StatsRow } from "@/components/sections/StatsRow";
 import { RegulatoryFooter } from "@/components/sections/RegulatoryFooter";
 import { SiteNav } from "@/components/sections/SiteNav";
 import { Hero } from "@/components/sections/Hero";
+import { DirectorsGrid } from "@/components/sections/DirectorsGrid";
+import { ProductHero, Eligibility, Documents, RatePanel, UseCases, HowItWorks, Faq, ProductCtaCard } from "@/components/sections/Products";
+import { ClippingsBoard } from "@/components/sections/ClippingsBoard";
 import { AdvisoryBand } from "@/components/sections/AdvisoryBand";
 import { BentoGrid, BentoTile } from "@/components/sections/BentoGrid";
 import { TileViz } from "@/components/viz/TileViz";
@@ -40,6 +43,9 @@ const NAV = [
   { id: "viz", label: "Viz" },
   { id: "forms", label: "Forms" },
   { id: "patterns", label: "Patterns" },
+  { id: "about", label: "About" },
+  { id: "insights", label: "Insights" },
+  { id: "products", label: "Products" },
 ];
 
 const VIZ = [
@@ -271,6 +277,69 @@ export default function DesignSystem() {
           </Specimen>
           <Specimen name="AdvisoryBand" surface="none">
             <div className="w-full"><AdvisoryBand eyebrow="Advisory" title="Talk to a mortgage advisor" copy="Free, no obligation. Real people who close Nigerian mortgages every week." cta={{ label: "Book a call", href: "#" }} stat={{ accent: "3", value: "advisors", sub: "on call right now, Mon–Sat" }} /></div>
+          </Specimen>
+        </SpecimenGroup>
+
+        {/* ABOUT */}
+        <SpecimenGroup id="about" eyebrow="Pages · 08" title="About">
+          <Specimen name="DirectorsGrid · board" description="Board of directors — dark cards, gold border + role, initials portrait." surface="navy">
+            <div className="w-full min-w-0"><DirectorsGrid directors={[
+              { name: "Adaeze Okafor", role: "Chairman", bio: "Two decades in Nigerian financial services and housing policy." },
+              { name: "Emeka Nwabufo", role: "Managing Director / CEO", bio: "Led AGMB's M-REIF first-mover programme since 2019." },
+            ]} /></div>
+          </Specimen>
+          <Specimen name="DirectorsGrid · exec (four-up)" description="Management team — compact cream cards, navy text." surface="cream">
+            <div className="w-full min-w-0"><DirectorsGrid layout="four" exec directors={[
+              { name: "Ngozi Madukwe", role: "Chief Risk Officer" },
+              { name: "Tunde Laleye", role: "Chief Financial Officer" },
+              { name: "Aisha Mosuro", role: "Head of Mortgages" },
+              { name: "Chidi Akachi", role: "Company Secretary" },
+            ]} /></div>
+          </Specimen>
+        </SpecimenGroup>
+
+        {/* INSIGHTS */}
+        <SpecimenGroup id="insights" eyebrow="Pages · 09" title="Insights">
+          <Specimen name="ClippingsBoard" description="The newsroom's torn-newspaper clippings — paper stock, grain, clip-path torn edges, slight rotation. Libre Baskerville headlines on the paper/ink palette." surface="none">
+            <div className="w-full min-w-0"><ClippingsBoard clippings={[
+              { source: "Business Day · 12 May 2026", headline: "AGMB eyes 2030 housing target with M-REIF expansion", dek: "The bank's refinance programme has disbursed ₦2.8B over the last year." },
+              { source: "Nairametrics · 02 May 2026", headline: "AGMB + Cutstruct partner on construction finance pilot" },
+              { source: "Agusto & Co · Apr 2026", headline: "Agusto upgrades AGMB outlook to stable", dek: "Citing improved asset quality and NHF origination volume." },
+              { source: "The Cable · 18 Apr 2026", headline: "Shaping a livable future: AGMB on housing for working Nigerians" },
+              { source: "Proshare · 09 Apr 2026", headline: "20% ROE: inside AGMB's 2025 results", dek: "Audited completions reached 97, up year on year." },
+              { source: "Punch · 28 Mar 2026", headline: "AGMB renews ISO 9001:2015 certification" },
+            ]} /></div>
+          </Specimen>
+        </SpecimenGroup>
+
+        {/* PRODUCTS */}
+        <SpecimenGroup id="products" eyebrow="Pages · 10" title="Products">
+          <p className="-mt-4 max-w-2xl text-sm text-text-muted-on-navy">Each product page is the same template themed by a per-product accent (NHF/REIF green, M-REIF/Commercial navy-vivid, Construction gold) flowing through dots, step borders, and the rate serif accent. Shown here with the NHF green accent.</p>
+          <Specimen name="ProductHero" description="Centred status line + H1 + lede + stat bar + per-product viz." surface="none">
+            <div className="w-full min-w-0"><ProductHero accent="#1A7A4A" viz="nhf" status={["NHF Mortgage", "CBN-regulated"]} heading={[{ text: "Own your first home on a " }, { text: "payslip", accent: true }, { text: "." }]} lede="The National Housing Fund route — fixed 6% over up to 30 years, for working Nigerians." stats={[{ num: "6.0%", lbl: "Fixed p.a." }, { num: "30 yrs", lbl: "Max tenure" }, { num: "₦15M", lbl: "Max NHF loan" }]} /></div>
+          </Specimen>
+          <Specimen name="HowItWorks" description="Numbered steps with a per-product accent top border." surface="cream">
+            <div className="w-full min-w-0"><HowItWorks accent="#1A7A4A" steps={[{ num: "01", name: "Confirm NHF status", copy: "We verify your FMBN contributions and eligibility." }, { num: "02", name: "Submit documents", copy: "ID, payslips, and property documents." }, { num: "03", name: "Offer & disbursement", copy: "Sign the offer to lock your rate; we disburse." }]} /></div>
+          </Specimen>
+          <Specimen name="Eligibility" description="Checklist rows with accent-tinted check." surface="navy">
+            <div className="w-full min-w-0"><Eligibility accent="#1A7A4A" items={[{ strong: "Nigerian citizen", text: "aged 21–60 with a valid ID (NIN or passport)." }, { strong: "NHF contributor", text: "for at least 6 months via your employer or voluntarily." }, { strong: "Verifiable income", text: "— salaried or with 6 months of bank statements." }]} /></div>
+          </Specimen>
+          <Specimen name="Documents" description="Required-documents grid." surface="cream">
+            <div className="w-full min-w-0"><Documents accent="#1A7A4A" docs={[{ num: "01", name: "Valid ID", copy: "NIN slip or international passport." }, { num: "02", name: "Bank statements", copy: "Last 6 months, stamped." }, { num: "03", name: "Property documents", copy: "Offer letter, survey, title." }]} /></div>
+          </Specimen>
+          <Specimen name="RatePanel" description="Rate cells with the Libre Baskerville accent figure." surface="navy">
+            <div className="w-full min-w-0"><RatePanel accent="#1A7A4A" cells={[{ eyebrow: "Interest", accent: "6.0", big: "%", sub: "Fixed per annum, NHF-subsidised." }, { eyebrow: "Tenure", accent: "30", big: "yrs", sub: "Maximum repayment period." }, { eyebrow: "Max loan", accent: "₦15", big: "M", sub: "NHF principal cap; top-up arranged separately." }]} /></div>
+          </Specimen>
+          <Specimen name="UseCases" description="Persona cards." surface="cream">
+            <div className="w-full min-w-0"><UseCases accent="#1A7A4A" cases={[{ persona: "Salaried", name: "First-time buyer", copy: "On a payslip, contributing to NHF — the lowest-rate route to ownership.", detail: "From ₦92,800/mo" }, { persona: "Civil servant", name: "Public sector", copy: "Stable income and NHF contributions make approval straightforward.", detail: "6.0% fixed" }]} /></div>
+          </Specimen>
+          <Specimen name="Faq + ProductCtaCard" description="FAQ accordion beside the squircle CTA card." surface="navy">
+            <div className="grid w-full min-w-0 grid-cols-1 gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
+              <Faq items={[{ q: "Who qualifies for an NHF mortgage?", a: "Nigerian citizens aged 21–60 who have contributed to the National Housing Fund for at least 6 months." }, { q: "What is the maximum I can borrow?", a: "The NHF principal cap is ₦15M; any shortfall is arranged as a separate top-up facility." }, { q: "How long does approval take?", a: "Typically 2–4 weeks once your documents are complete and verified." }]} />
+              <ProductCtaCard title="Start your NHF application" lede="A mortgage advisor will confirm your route and indicative rate within 2 working days.">
+                <a className="cta cta--secondary" href="#" style={{ alignSelf: "flex-start" }}>Apply now</a>
+              </ProductCtaCard>
+            </div>
           </Specimen>
         </SpecimenGroup>
 
