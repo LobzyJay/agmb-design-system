@@ -1,84 +1,76 @@
-// AGMB mortgage calculator — pure formula utilities.
-// Spec: PRD §5.1 — vanilla JS, client-side, no library, <16ms re-render budget.
-//
-// Formula: M = P × [r(1+r)^n] / [(1+r)^n − 1]
-//   M = monthly repayment
-//   P = principal (loan amount, not property value)
-//   r = monthly interest rate (annual rate / 12 / 100)
-//   n = total months (tenure years × 12)
-//
-// Edge cases: 0 interest reduces to M = P/n. 0 principal → 0 repayment.
+// Mortgage math — ported verbatim from the live agmb-website calculator.
+// Reducing-balance amortization per CBN guidelines, with per-route rate + cap.
 
-import { LTV_SAFE_MAX, LTV_CAUTION_MAX } from "@/constants/mortgage";
-
-export interface MortgageInputs {
-  /** Property value in NGN (₦). */
-  propertyValue: number;
-  /** Deposit in NGN — what the borrower pays upfront. */
-  deposit: number;
-  /** Tenure in years. PRD §5.1: 5–30. */
-  tenureYears: number;
-  /** Annual interest rate as a percentage (e.g. 9.5 for 9.5%). */
-  annualRate: number;
+export interface Segment {
+  rate: number;
+  cap: number | null;
+  label: string;
+  short: string;
+  rateLabel: string;
 }
 
-export interface MortgageOutputs {
-  /** Loan principal — propertyValue minus deposit (clamped ≥ 0). */
-  loanAmount: number;
-  /** Loan-to-value as a percentage (0–100+). */
+export const SEGMENTS: Record<string, Segment> = {
+  nhf: { rate: 6.0, cap: 15_000_000, label: "National Housing Fund", short: "NHF", rateLabel: "6.0% p.a. · fixed" },
+  mreif: { rate: 9.5, cap: 50_000_000, label: "M-REIF · Underserved", short: "M-REIF", rateLabel: "9.5% p.a. · indicative" },
+  classic: { rate: 22.0, cap: null, label: "Classic Mortgage", short: "Classic", rateLabel: "22.0% p.a. · indicative" },
+  diaspora: { rate: 18.0, cap: 80_000_000, label: "Diaspora-NHF", short: "Diaspora", rateLabel: "18.0% p.a. · indicative" },
+};
+
+export interface Amortization {
+  monthly: number;
+  total: number;
+  interest: number;
+}
+
+export function amortize(P: number, annualRatePct: number, years: number): Amortization {
+  const r = annualRatePct / 100 / 12;
+  const n = years * 12;
+  if (P <= 0 || n <= 0) return { monthly: 0, total: 0, interest: 0 };
+  if (r === 0) return { monthly: P / n, total: P, interest: 0 };
+  const factor = Math.pow(1 + r, n);
+  const M = (P * r * factor) / (factor - 1);
+  return { monthly: M, total: M * n, interest: M * n - P };
+}
+
+export function naira(n: number): string {
+  return "₦" + Math.round(n).toLocaleString("en-NG");
+}
+
+export interface CalcInput {
+  segment: string;
+  property: number;
+  downPct: number;
+  tenor: number;
+}
+
+export interface CalcResult extends Amortization {
+  seg: Segment;
+  principal: number;
+  downAmount: number;
   ltv: number;
-  /** Indicative monthly repayment in NGN. */
-  monthlyRepayment: number;
-  /** Total interest paid across the full tenure. */
-  totalInterest: number;
-  /** Total repayment = loanAmount + totalInterest. */
-  totalRepayment: number;
+  interestPct: number;
+  principalPct: number;
+  capped: boolean;
+  shortfall: number;
 }
 
-export function calculateMortgage(inputs: MortgageInputs): MortgageOutputs {
-  const { propertyValue, deposit, tenureYears, annualRate } = inputs;
-
-  const loanAmount = Math.max(0, propertyValue - deposit);
-  const ltv = propertyValue > 0 ? (loanAmount / propertyValue) * 100 : 0;
-
-  const totalMonths = Math.max(1, Math.round(tenureYears * 12));
-  const monthlyRate = annualRate / 100 / 12;
-
-  let monthlyRepayment = 0;
-  if (loanAmount > 0) {
-    if (monthlyRate === 0) {
-      // Edge case: zero-interest reduces to straight-line repayment.
-      monthlyRepayment = loanAmount / totalMonths;
-    } else {
-      const factor = Math.pow(1 + monthlyRate, totalMonths);
-      monthlyRepayment = (loanAmount * monthlyRate * factor) / (factor - 1);
-    }
-  }
-
-  const totalRepayment = monthlyRepayment * totalMonths;
-  const totalInterest = Math.max(0, totalRepayment - loanAmount);
-
+export function calculate({ segment, property, downPct, tenor }: CalcInput): CalcResult {
+  const seg = SEGMENTS[segment] ?? SEGMENTS.nhf;
+  const desired = property * (1 - downPct / 100);
+  const principal = seg.cap ? Math.min(desired, seg.cap) : desired;
+  const downAmount = (property * downPct) / 100;
+  const out = amortize(principal, seg.rate, tenor);
+  const ltv = (principal / property) * 100;
+  const interestPct = out.total > 0 ? (out.interest / out.total) * 100 : 0;
   return {
-    loanAmount,
+    ...out,
+    seg,
+    principal,
+    downAmount,
     ltv,
-    monthlyRepayment,
-    totalInterest,
-    totalRepayment,
+    interestPct,
+    principalPct: 100 - interestPct,
+    capped: !!(seg.cap && desired > seg.cap),
+    shortfall: seg.cap ? Math.max(0, desired - seg.cap) : 0,
   };
-}
-
-// LTV band — green / amber / red — drives <LTVIndicator>.
-export function ltvBand(ltv: number): "safe" | "caution" | "warning" {
-  if (ltv <= LTV_SAFE_MAX) return "safe";
-  if (ltv <= LTV_CAUTION_MAX) return "caution";
-  return "warning";
-}
-
-// LTV warning copy per band — surfaces in <InlinePrompt>.
-export function ltvMessage(ltv: number): string | null {
-  if (ltv <= LTV_SAFE_MAX) return null;
-  if (ltv <= LTV_CAUTION_MAX) {
-    return "Above 80% LTV — most products charge a higher indicative rate.";
-  }
-  return "Above 90% LTV — most products reject. Consider increasing your deposit.";
 }
